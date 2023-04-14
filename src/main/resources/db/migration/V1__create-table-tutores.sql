@@ -1,0 +1,10 @@
+CREATE TABLE tutores (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  nome VARCHAR(100) NOT NULL,
+  email VARCHAR(100) NOT NULL UNIQUE,
+  senha VARCHAR(255) NOT NULL,
+  foto VARCHAR(255),
+  telefone VARCHAR(20),
+  cidade VARCHAR(100),
+  sobre TEXT
+);
