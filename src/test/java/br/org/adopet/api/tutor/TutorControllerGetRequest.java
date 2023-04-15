@@ -24,30 +24,30 @@ class TutorControllerGetRequest {
 	private TutorRepository tutorRepository;
 	
 	@Test
-	void testGetTutorById() throws Exception {
-		Long tutorId = 27L;
+	void testGetTutorPeloId() throws Exception {
+		Long tutorId = 26L;
 
 		mockMvc.perform(get("/tutores/{id}", tutorId)).andExpect(status().isOk())
 				.andExpect(content().contentType(MediaType.APPLICATION_JSON)).andReturn();
 	}
 
 	@Test
-	void testGetTutorByIdNotFound() throws Exception {
-		Long id = 999L;
-		mockMvc.perform(get("/tutores/"+id))
+	void testGetTutorPeloIdNaoEncontrado() throws Exception {
+		Long tutorId = 999L;
+		mockMvc.perform(get("/tutores/{id}", tutorId))
         .andExpect(status().isNotFound())
         .andExpect(content().string(containsString("Não foi encontrado nenhum tutor com este ID.")))
         .andReturn();
 	}
 	
 	@Test
-	void testGetAllTutors() throws Exception {
+	void testGetTodosTutores() throws Exception {
 		mockMvc.perform(get("/tutores")).andExpect(status().isOk())
 				.andExpect(content().contentType(MediaType.APPLICATION_JSON)).andReturn();
 	}
 
 	@Test
-	void testGetAllTutorsEmptyTable() throws Exception {
+	void testGetTodosTutoresTabelaVazia() throws Exception {
 		tutorRepository.deleteAll();
 		mockMvc.perform(get("/tutores"))
         .andExpect(status().isNotFound())
