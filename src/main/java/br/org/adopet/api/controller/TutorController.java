@@ -10,9 +10,12 @@ import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+
+import br.org.adopet.api.dto.TutorAlteracaoDTO;
 import br.org.adopet.api.dto.TutorCadastroDTO;
 import br.org.adopet.api.dto.TutorListagemDTO;
 import br.org.adopet.api.model.Tutor;
@@ -50,13 +53,22 @@ public class TutorController {
 
 	@PostMapping
 	@Transactional
-	public Tutor post(@RequestBody @Valid TutorCadastroDTO dadosTutor) {
+	public TutorListagemDTO post(@RequestBody @Valid TutorCadastroDTO dadosTutor) {
 		Tutor tutorCriado = repository.save(new Tutor(dadosTutor));
-		return tutorCriado;
+		return new TutorListagemDTO(tutorCriado);
 	}
 
+	@PutMapping
+	@Transactional
+	public TutorAlteracaoDTO put(@RequestBody @Valid TutorAlteracaoDTO dadosTutor) {
+		Tutor tutor = repository.getReferenceById(dadosTutor.id());
+		tutor.atualizarInformações(dadosTutor);
+		return new TutorAlteracaoDTO(tutor);
+	}
+	
 	@DeleteMapping("/{id}")
-	public ResponseEntity<String> deletar(@PathVariable Long id) {
+	@Transactional
+	public ResponseEntity<String> delete(@PathVariable Long id) {
 		String mensagem = "";
 		Optional<Tutor> tutor = repository.findById(id);
 		if (tutor.isEmpty()) {

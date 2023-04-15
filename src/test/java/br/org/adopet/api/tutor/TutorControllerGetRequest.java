@@ -25,7 +25,7 @@ class TutorControllerGetRequest {
 	
 	@Test
 	void testGetTutorPeloId() throws Exception {
-		Long tutorId = 26L;
+		Long tutorId = 1L;
 
 		mockMvc.perform(get("/tutores/{id}", tutorId)).andExpect(status().isOk())
 				.andExpect(content().contentType(MediaType.APPLICATION_JSON)).andReturn();

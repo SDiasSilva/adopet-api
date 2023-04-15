@@ -28,7 +28,7 @@ class TutorControllerPostRequestTest {
 	private TutorRepository tutorRepository;
 
 	@Test
-	void testCadastroTutorComEmailInvalido() throws Exception {
+	void testPostTutorComEmailInvalido() throws Exception {
 		TutorCadastroDTO dadosTutor = new TutorCadastroDTO("Sidnei Dias", "emailInvalido", "I@mju5tTesting");
 		mockMvc.perform(
 				post("/tutores").contentType(MediaType.APPLICATION_JSON).content(asJsonString(new Tutor(dadosTutor))))
@@ -36,7 +36,7 @@ class TutorControllerPostRequestTest {
 	}
 
 	@Test
-	void testCadastroTutorComSenhaInvalida() throws Exception {
+	void testPostTutorComSenhaInvalida() throws Exception {
 		TutorCadastroDTO dadosTutor = new TutorCadastroDTO("Sidnei Dias", "sidnei@example.com", "senhafraca");
 		mockMvc.perform(
 				post("/tutores").contentType(MediaType.APPLICATION_JSON).content(asJsonString(new Tutor(dadosTutor))))
@@ -44,7 +44,7 @@ class TutorControllerPostRequestTest {
 	}
 
 	@Test
-	void testCadastroTutorComEmailJaCadastrado() throws Exception {
+	void testPostTutorComEmailJaCadastrado() throws Exception {
 		Tutor tutorExistente = new Tutor(new TutorCadastroDTO("Tutor Existente", "tutorexistente@example.com", "I@mju5tTesting"));
 		tutorRepository.save(tutorExistente);
 
