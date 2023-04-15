@@ -1,4 +1,4 @@
-package br.org.adopet.api;
+package br.org.adopet.api.tutor;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -19,7 +19,7 @@ import br.org.adopet.api.repository.TutorRepository;
 @SpringBootTest
 @AutoConfigureMockMvc
 @Transactional
-class TutorControllerRequestTest {
+class TutorControllerPostRequestTest {
 
 	@Autowired
 	private MockMvc mockMvc;
