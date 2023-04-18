@@ -12,9 +12,10 @@ import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.transaction.annotation.Transactional;
-import br.org.adopet.api.dto.TutorCadastroDTO;
-import br.org.adopet.api.model.Tutor;
-import br.org.adopet.api.repository.TutorRepository;
+
+import br.org.adopet.api.domain.dto.TutorCadastroDTO;
+import br.org.adopet.api.domain.model.Tutor;
+import br.org.adopet.api.domain.repository.TutorRepository;
 
 @SpringBootTest
 @AutoConfigureMockMvc

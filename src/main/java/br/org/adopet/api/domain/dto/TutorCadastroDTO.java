@@ -1,4 +1,4 @@
-package br.org.adopet.api.dto;
+package br.org.adopet.api.domain.dto;
 
 import jakarta.persistence.Column;
 import jakarta.validation.constraints.Email;

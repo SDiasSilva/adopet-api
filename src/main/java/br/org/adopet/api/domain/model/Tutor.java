@@ -1,11 +1,13 @@
-package br.org.adopet.api.model;
+package br.org.adopet.api.domain.model;
 
-import br.org.adopet.api.dto.TutorAlteracaoDTO;
-import br.org.adopet.api.dto.TutorCadastroDTO;
+import br.org.adopet.api.domain.dto.TutorAlteracaoDTO;
+import br.org.adopet.api.domain.dto.TutorCadastroDTO;
+import jakarta.persistence.Embedded;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
@@ -22,17 +24,16 @@ public class Tutor {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
-	private String nome;
-	private String email;
+	@Embedded
+	private Contato contato;
 	private String senha;
 	private String foto;
-	private String telefone;
-	private String cidade;
+	@ManyToOne
+	private Cidade cidade;
 	private String sobre;
 
 	public Tutor(TutorCadastroDTO dadosTutor) {
-		this.nome = dadosTutor.nome();
-		this.email = dadosTutor.email();
+		this.contato = new Contato(dadosTutor.nome(), dadosTutor.email());
 		this.senha = dadosTutor.senha();
 	}
 
@@ -41,12 +42,12 @@ public class Tutor {
 			this.foto = dadosTutor.foto();
 		}
 		if (dadosTutor.nome() != null && !dadosTutor.nome().trim().isBlank()) {
-			this.nome = dadosTutor.nome();
+			this.contato.setNome(dadosTutor.nome());
 		}
 		if (dadosTutor.telefone() != null && !dadosTutor.telefone().trim().isBlank()) {
-			this.telefone = dadosTutor.telefone();
+			this.contato.setTelefone(dadosTutor.telefone());
 		}
-		if (dadosTutor.cidade() != null && !dadosTutor.cidade().trim().isBlank()) {
+		if (dadosTutor.cidade() != null) {
 			this.cidade = dadosTutor.cidade();
 		}
 		if (dadosTutor.sobre() != null && !dadosTutor.sobre().trim().isBlank()) {

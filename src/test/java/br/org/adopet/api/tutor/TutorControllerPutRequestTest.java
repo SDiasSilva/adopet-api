@@ -12,10 +12,12 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.transaction.annotation.Transactional;
-import br.org.adopet.api.dto.TutorAlteracaoDTO;
-import br.org.adopet.api.dto.TutorCadastroDTO;
-import br.org.adopet.api.model.Tutor;
-import br.org.adopet.api.repository.TutorRepository;
+
+import br.org.adopet.api.domain.dto.TutorAlteracaoDTO;
+import br.org.adopet.api.domain.dto.TutorCadastroDTO;
+import br.org.adopet.api.domain.model.Cidade;
+import br.org.adopet.api.domain.model.Tutor;
+import br.org.adopet.api.domain.repository.TutorRepository;
 
 
 @SpringBootTest
@@ -34,14 +36,14 @@ class TutorControllerPutRequestTest {
 		Tutor tutor = repository
 				.save(new Tutor(new TutorCadastroDTO("John Doe", "johndoe@example.com", "Password123@")));
 		TutorAlteracaoDTO tutorAlteracaoDTO = new TutorAlteracaoDTO(tutor.getId(), "", "http://example.com/profile.jpg",
-				"1234567890", "New York", "I am a tutor.");
+				"1234567890", new Cidade("New York"), "I am a tutor.");
 	    String requestBody = new ObjectMapper().writeValueAsString(tutorAlteracaoDTO);
 	    mockMvc.perform(put("/tutores")
 	            .contentType(MediaType.APPLICATION_JSON)
 	            .content(requestBody))
 	            .andExpect(status().isOk())
 	            .andExpect(jsonPath("$.id", is(tutor.getId().intValue())))
-	            .andExpect(jsonPath("$.nome", is(tutor.getNome())));
+	            .andExpect(jsonPath("$.nome", is(tutor.getContato().getNome())));
 	}
 	
 	@Test
@@ -88,14 +90,14 @@ class TutorControllerPutRequestTest {
 	@Test
 	public void testPutTutorCidade() throws Exception {
 	    Tutor tutor = repository.save(new Tutor(new TutorCadastroDTO("John Doe", "johndoe@example.com", "Password123@")));
-	    TutorAlteracaoDTO tutorAlteracaoDTO = new TutorAlteracaoDTO(tutor.getId(), null, null, null, "New City", null);
+	    TutorAlteracaoDTO tutorAlteracaoDTO = new TutorAlteracaoDTO(tutor.getId(), null, null, null, new Cidade("New City"), null);
 	    String requestBody = new ObjectMapper().writeValueAsString(tutorAlteracaoDTO);
 	    mockMvc.perform(put("/tutores")
 	            .contentType(MediaType.APPLICATION_JSON)
 	            .content(requestBody))
 	            .andExpect(status().isOk())
 	            .andExpect(jsonPath("$.id", is(tutor.getId().intValue())))
-	            .andExpect(jsonPath("$.cidade", is("New City")));
+	            .andExpect(jsonPath("$.cidade.nome", is("New City")));
 	}
 
 	@Test

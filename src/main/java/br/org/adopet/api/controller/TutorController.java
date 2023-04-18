@@ -14,12 +14,11 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-
-import br.org.adopet.api.dto.TutorAlteracaoDTO;
-import br.org.adopet.api.dto.TutorCadastroDTO;
-import br.org.adopet.api.dto.TutorListagemDTO;
-import br.org.adopet.api.model.Tutor;
-import br.org.adopet.api.repository.TutorRepository;
+import br.org.adopet.api.domain.dto.TutorAlteracaoDTO;
+import br.org.adopet.api.domain.dto.TutorCadastroDTO;
+import br.org.adopet.api.domain.dto.TutorListagemDTO;
+import br.org.adopet.api.domain.model.Tutor;
+import br.org.adopet.api.domain.repository.TutorRepository;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.validation.Valid;
 
@@ -31,52 +30,44 @@ public class TutorController {
 	private TutorRepository repository;
 
 	@GetMapping
-	public ResponseEntity<?> get() {
+	public ResponseEntity<List<TutorListagemDTO>> get() {
 		List<TutorListagemDTO> tutores = repository.findAll().stream().map(TutorListagemDTO::new).toList();
-		if (tutores.isEmpty()) {
-			String mensagem = "Não foi encontrado nenhum tutor cadastrado no banco de dados.";
-			return ResponseEntity.status(HttpStatus.NOT_FOUND).body(mensagem);
+		if(tutores.size() == 0) {
+			throw new EntityNotFoundException();
 		}
 		return ResponseEntity.ok(tutores);
 	}
 
 	@GetMapping("/{id}")
-	public ResponseEntity<?> get(@PathVariable Long id) {
-		try {
-			Tutor tutor = repository.getReferenceById(id);
-			return ResponseEntity.ok(new TutorListagemDTO(tutor));
-		} catch (EntityNotFoundException e) {
-			String mensagem = "Não foi encontrado nenhum tutor com este ID.";
-			return ResponseEntity.status(HttpStatus.NOT_FOUND).body(mensagem);
-		}
+	public ResponseEntity<TutorListagemDTO> get(@PathVariable Long id) {
+		Tutor tutor = repository.getReferenceById(id);
+		return ResponseEntity.ok(new TutorListagemDTO(tutor));
 	}
 
 	@PostMapping
 	@Transactional
-	public TutorListagemDTO post(@RequestBody @Valid TutorCadastroDTO dadosTutor) {
+	public ResponseEntity<TutorListagemDTO> post(@RequestBody @Valid TutorCadastroDTO dadosTutor) {
 		Tutor tutorCriado = repository.save(new Tutor(dadosTutor));
-		return new TutorListagemDTO(tutorCriado);
+		return ResponseEntity.ok(new TutorListagemDTO(tutorCriado));
 	}
 
 	@PutMapping
 	@Transactional
-	public TutorAlteracaoDTO put(@RequestBody @Valid TutorAlteracaoDTO dadosTutor) {
+	public ResponseEntity<TutorAlteracaoDTO> put(@RequestBody @Valid TutorAlteracaoDTO dadosTutor) {
 		Tutor tutor = repository.getReferenceById(dadosTutor.id());
 		tutor.atualizarInformações(dadosTutor);
-		return new TutorAlteracaoDTO(tutor);
+		return ResponseEntity.ok(new TutorAlteracaoDTO(tutor));
 	}
-	
+
 	@DeleteMapping("/{id}")
 	@Transactional
 	public ResponseEntity<String> delete(@PathVariable Long id) {
-		String mensagem = "";
 		Optional<Tutor> tutor = repository.findById(id);
-		if (tutor.isEmpty()) {
-			mensagem = "O tutor com ID(" + id + ") não existe, portanto não pode ser deletado.";
-			return ResponseEntity.status(HttpStatus.NOT_FOUND).body(mensagem);
+		if(tutor.isEmpty()) { 
+			throw new EntityNotFoundException();
 		}
 		repository.deleteById(id);
-		mensagem = "O tutor com ID(" + id + ") foi deletado com sucesso.";
-		return ResponseEntity.ok().body(mensagem);
+		String mensagem = "Tutor excluído com sucesso.";
+		return new ResponseEntity<String>(mensagem, HttpStatus.NO_CONTENT);
 	}
 }

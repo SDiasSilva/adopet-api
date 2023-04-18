@@ -9,8 +9,12 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.transaction.annotation.Transactional;
+
+import br.org.adopet.api.domain.dto.TutorCadastroDTO;
+import br.org.adopet.api.domain.model.Tutor;
+import br.org.adopet.api.domain.repository.TutorRepository;
+
 import static org.hamcrest.Matchers.containsString;
-import br.org.adopet.api.repository.TutorRepository;
 
 @SpringBootTest
 @AutoConfigureMockMvc
@@ -25,9 +29,8 @@ class TutorControllerGetRequest {
 	
 	@Test
 	void testGetTutorPeloId() throws Exception {
-		Long tutorId = 1L;
-
-		mockMvc.perform(get("/tutores/{id}", tutorId)).andExpect(status().isOk())
+		Tutor tutor = tutorRepository.save(new Tutor(new TutorCadastroDTO("John Doe", "johndoe@example.com", "Password123@")));
+		mockMvc.perform(get("/tutores/{id}", tutor.getId())).andExpect(status().isOk())
 				.andExpect(content().contentType(MediaType.APPLICATION_JSON)).andReturn();
 	}
 
@@ -35,9 +38,7 @@ class TutorControllerGetRequest {
 	void testGetTutorPeloIdNaoEncontrado() throws Exception {
 		Long tutorId = 999L;
 		mockMvc.perform(get("/tutores/{id}", tutorId))
-        .andExpect(status().isNotFound())
-        .andExpect(content().string(containsString("Não foi encontrado nenhum tutor com este ID.")))
-        .andReturn();
+        .andExpect(status().isNotFound());
 	}
 	
 	@Test
