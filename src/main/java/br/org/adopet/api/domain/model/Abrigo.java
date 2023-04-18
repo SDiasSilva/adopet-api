@@ -1,6 +1,7 @@
 package br.org.adopet.api.domain.model;
 
 import br.org.adopet.api.domain.dto.AbrigoCadastroDTO;
+import br.org.adopet.api.domain.dto.AbrigoAlteracaoDTO;
 import jakarta.persistence.Embedded;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -31,5 +32,20 @@ public class Abrigo {
 	public Abrigo(AbrigoCadastroDTO dadosAbrigo, Cidade cidade) {
 		this.contato = new Contato(dadosAbrigo.nome(), dadosAbrigo.email(), dadosAbrigo.telefone());
 		this.cidade = cidade;
+	}
+
+	public void atualizarInformacoes(AbrigoAlteracaoDTO dadosAbrigo, Cidade cidade) {
+		if(dadosAbrigo.nome() != null && !dadosAbrigo.nome().trim().isBlank()) {
+			this.contato.setNome(dadosAbrigo.nome());
+		}
+		if(dadosAbrigo.email() != null && !dadosAbrigo.email().trim().isBlank()) {
+			this.contato.setEmail(dadosAbrigo.email());
+		}
+		if(dadosAbrigo.telefone() != null && !dadosAbrigo.telefone().trim().isBlank()) {
+			this.contato.setTelefone(dadosAbrigo.telefone());
+		}
+		if(cidade != null) {
+			this.cidade = cidade;
+		}
 	}
 }
