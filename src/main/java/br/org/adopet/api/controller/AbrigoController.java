@@ -1,9 +1,11 @@
 package br.org.adopet.api.controller;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -37,12 +39,12 @@ public class AbrigoController {
 	public ResponseEntity<List<AbrigoListagemDTO>> get() {
 		List<AbrigoListagemDTO> abrigos = abrigoRepository.findAll().stream().map(AbrigoListagemDTO::new).toList();
 		if (abrigos.size() == 0) {
-			throw new EntityNotFoundException();
+			throw new EntityNotFoundException("Nenhum abrigo ");
 		}
 		return ResponseEntity.ok(abrigos);
 	}
 
-	@GetMapping({ "/{id}" })
+	@GetMapping("/{id}")
 	public ResponseEntity<AbrigoListagemDTO> get(@PathVariable Long id) {
 		Abrigo abrigo = abrigoRepository.getReferenceById(id);
 		return ResponseEntity.ok(new AbrigoListagemDTO(abrigo));
@@ -68,6 +70,17 @@ public class AbrigoController {
 		return alterarAbrigo(dadosAbrigo);
 	}
 
+	@DeleteMapping("/{id}")
+	public ResponseEntity<String> delete(@PathVariable Long id){
+		Optional<Abrigo> abrigo = abrigoRepository.findById(id);
+		if(abrigo.isEmpty()) { 
+			throw new EntityNotFoundException();
+		}
+		abrigoRepository.deleteById(id);
+		String mensagem = "Abrigo com o id("+id+") foi excluído com sucesso.";
+		return ResponseEntity.ok(mensagem);
+	}
+	
 	private Cidade verificarCidadeId(Long id) {
 		Cidade cidade = null;
 		if (id != null) {

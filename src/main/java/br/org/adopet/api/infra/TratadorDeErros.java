@@ -17,7 +17,7 @@ public class TratadorDeErros {
 
 	@ExceptionHandler(EntityNotFoundException.class)
 	public ResponseEntity<String> tratarErro404() {
-		String mensagem = "Não encontrado.";
+		String mensagem = "Nada foi encontrado no banco de dados.";
 		return new ResponseEntity<String>(mensagem, HttpStatus.NOT_FOUND);
 	}
 	
