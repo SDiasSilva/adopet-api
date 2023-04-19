@@ -30,7 +30,7 @@ public class TratadorDeErros {
 	
 	@ExceptionHandler(SQLIntegrityConstraintViolationException.class)
 	public ResponseEntity<String> tratarErroDeIntegridade(SQLIntegrityConstraintViolationException ex) {
-		String sqlState = ex.getMessage();
+		String sqlState = "Erro na query sql: "+ex.getMessage();
 		return ResponseEntity.badRequest().body(sqlState);
 	}
 	
