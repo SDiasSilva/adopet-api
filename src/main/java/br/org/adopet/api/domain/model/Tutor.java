@@ -1,5 +1,7 @@
 package br.org.adopet.api.domain.model;
 
+import java.util.function.Function;
+
 import br.org.adopet.api.domain.dto.TutorAlteracaoDTO;
 import br.org.adopet.api.domain.dto.TutorCadastroDTO;
 import jakarta.persistence.Embedded;
@@ -56,10 +58,29 @@ public class Tutor {
 	}
 
 	public String getNomeCidade() {
-		return this.cidade.getNome();
+		return getCidadeAtributo(Cidade::getNome);
 	}
 
 	public String getEstado() {
-		return this.cidade.getEstado().getSigla();
+		return getCidadeAtributo(cidade -> cidade.getEstado().getSigla());
+	}
+
+	public String getNome() {
+		return this.contato.getNome();
+	}
+	
+	public String getTelefone() {
+		return this.contato.getTelefone();
+	}
+
+	public String getEmail() {
+		return this.contato.getEmail();
+	}
+	
+	private String getCidadeAtributo(Function<Cidade, String> atributoGetter) {
+		if (this.cidade == null) {
+			return null;
+		}
+		return atributoGetter.apply(this.cidade);
 	}
 }

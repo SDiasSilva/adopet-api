@@ -2,17 +2,23 @@ package br.org.adopet.api.controller;
 
 import java.util.List;
 import java.util.Optional;
+
+import javax.sound.midi.Patch;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+
+import br.org.adopet.api.domain.dto.MensagemDTO;
 import br.org.adopet.api.domain.dto.TutorAlteracaoDTO;
 import br.org.adopet.api.domain.dto.TutorCadastroDTO;
 import br.org.adopet.api.domain.dto.TutorListagemDTO;
@@ -32,11 +38,11 @@ public class TutorController {
 
 	@Autowired
 	private CidadeRepository cidadeRepository;
-	
+
 	@GetMapping
 	public ResponseEntity<List<TutorListagemDTO>> get() {
 		List<TutorListagemDTO> tutores = tutorRepository.findAll().stream().map(TutorListagemDTO::new).toList();
-		if(tutores.size() == 0) {
+		if (tutores.size() == 0) {
 			throw new EntityNotFoundException();
 		}
 		return ResponseEntity.ok(tutores);
@@ -44,7 +50,7 @@ public class TutorController {
 
 	@GetMapping("/{id}")
 	public ResponseEntity<TutorListagemDTO> get(@PathVariable Long id) {
-		Tutor tutor = tutorRepository.getReferenceById(id);
+		Tutor tutor = buscarTutorPeloId(id);
 		return ResponseEntity.ok(new TutorListagemDTO(tutor));
 	}
 
@@ -58,30 +64,40 @@ public class TutorController {
 	@PutMapping
 	@Transactional
 	public ResponseEntity<TutorListagemDTO> put(@RequestBody @Valid TutorAlteracaoDTO dadosTutor) {
-		Cidade cidade = buscarPetPeloId(dadosTutor.cidadeId());
-		Tutor tutor = buscarTutorPeloId(dadosTutor.id());
-		tutor.atualizarInformações(dadosTutor, cidade);
-		return ResponseEntity.ok(new TutorListagemDTO(tutor));
+		return atualizarTutor(dadosTutor);
+	}
+
+	@PatchMapping
+	@Transactional
+	public ResponseEntity<TutorListagemDTO> patch(@RequestBody @Valid TutorAlteracaoDTO dadosTutor) {
+		return atualizarTutor(dadosTutor);
 	}
 
 	@DeleteMapping("/{id}")
 	@Transactional
-	public ResponseEntity<String> delete(@PathVariable Long id) {
-		Optional<Tutor> tutor = tutorRepository.findById(id);
-		if(tutor.isEmpty()) { 
-			throw new EntityNotFoundException();
-		}
-		tutorRepository.deleteById(id);
-		String mensagem = "Tutor com o id("+id+") foi excluído com sucesso.";
-		return ResponseEntity.ok(mensagem);
+	public ResponseEntity<MensagemDTO> delete(@PathVariable Long id) {
+		Tutor tutor = buscarTutorPeloId(id);
+		tutorRepository.delete(tutor);
+		MensagemDTO mensagemDTO = new MensagemDTO(String.format("O Tutor com ID %d foi excluído com sucesso.", id));
+		return ResponseEntity.ok(mensagemDTO);
 	}
-	
+
+	private ResponseEntity<TutorListagemDTO> atualizarTutor(TutorAlteracaoDTO dadosTutor) {
+		Tutor tutor = buscarTutorPeloId(dadosTutor.id());
+		Cidade cidade = buscarCidadePeloId(dadosTutor.cidadeId());
+		tutor.atualizarInformações(dadosTutor, cidade);
+		return ResponseEntity.ok(new TutorListagemDTO(tutor));
+	}
+
 	private Tutor buscarTutorPeloId(Long id) {
 		return tutorRepository.findById(id).orElseThrow(() -> new EntityNotFoundException(
 				String.format("O tutor com ID %d não foi encontrado no banco de dados.", id)));
 	}
-	
-	private Cidade buscarPetPeloId(Long id) {
+
+	private Cidade buscarCidadePeloId(Long id) {
+		if (id == null) {
+			return null;
+		}
 		return cidadeRepository.findById(id).orElseThrow(() -> new EntityNotFoundException(
 				String.format("A cidade com ID %d não foi encontrado no banco de dados.", id)));
 	}
