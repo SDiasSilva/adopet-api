@@ -37,7 +37,7 @@ public class Tutor {
 		this.senha = dadosTutor.senha();
 	}
 
-	public void atualizarInformações(TutorAlteracaoDTO dadosTutor) {
+	public void atualizarInformações(TutorAlteracaoDTO dadosTutor, Cidade cidade) {
 		if (dadosTutor.foto() != null && !dadosTutor.foto().trim().isBlank()) {
 			this.foto = dadosTutor.foto();
 		}
@@ -47,11 +47,19 @@ public class Tutor {
 		if (dadosTutor.telefone() != null && !dadosTutor.telefone().trim().isBlank()) {
 			this.contato.setTelefone(dadosTutor.telefone());
 		}
-		if (dadosTutor.cidade() != null) {
-			this.cidade = dadosTutor.cidade();
+		if (cidade != null) {
+			this.cidade = cidade;
 		}
 		if (dadosTutor.sobre() != null && !dadosTutor.sobre().trim().isBlank()) {
 			this.sobre = dadosTutor.sobre();
 		}
+	}
+
+	public String getNomeCidade() {
+		return this.cidade.getNome();
+	}
+
+	public String getEstado() {
+		return this.cidade.getEstado().getSigla();
 	}
 }

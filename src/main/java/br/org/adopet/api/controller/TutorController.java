@@ -16,7 +16,9 @@ import org.springframework.web.bind.annotation.RestController;
 import br.org.adopet.api.domain.dto.TutorAlteracaoDTO;
 import br.org.adopet.api.domain.dto.TutorCadastroDTO;
 import br.org.adopet.api.domain.dto.TutorListagemDTO;
+import br.org.adopet.api.domain.model.Cidade;
 import br.org.adopet.api.domain.model.Tutor;
+import br.org.adopet.api.domain.repository.CidadeRepository;
 import br.org.adopet.api.domain.repository.TutorRepository;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.validation.Valid;
@@ -26,11 +28,14 @@ import jakarta.validation.Valid;
 public class TutorController {
 
 	@Autowired
-	private TutorRepository repository;
+	private TutorRepository tutorRepository;
 
+	@Autowired
+	private CidadeRepository cidadeRepository;
+	
 	@GetMapping
 	public ResponseEntity<List<TutorListagemDTO>> get() {
-		List<TutorListagemDTO> tutores = repository.findAll().stream().map(TutorListagemDTO::new).toList();
+		List<TutorListagemDTO> tutores = tutorRepository.findAll().stream().map(TutorListagemDTO::new).toList();
 		if(tutores.size() == 0) {
 			throw new EntityNotFoundException();
 		}
@@ -39,34 +44,45 @@ public class TutorController {
 
 	@GetMapping("/{id}")
 	public ResponseEntity<TutorListagemDTO> get(@PathVariable Long id) {
-		Tutor tutor = repository.getReferenceById(id);
+		Tutor tutor = tutorRepository.getReferenceById(id);
 		return ResponseEntity.ok(new TutorListagemDTO(tutor));
 	}
 
 	@PostMapping
 	@Transactional
 	public ResponseEntity<TutorListagemDTO> post(@RequestBody @Valid TutorCadastroDTO dadosTutor) {
-		Tutor tutorCriado = repository.save(new Tutor(dadosTutor));
+		Tutor tutorCriado = tutorRepository.save(new Tutor(dadosTutor));
 		return ResponseEntity.ok(new TutorListagemDTO(tutorCriado));
 	}
 
 	@PutMapping
 	@Transactional
-	public ResponseEntity<TutorAlteracaoDTO> put(@RequestBody @Valid TutorAlteracaoDTO dadosTutor) {
-		Tutor tutor = repository.getReferenceById(dadosTutor.id());
-		tutor.atualizarInformações(dadosTutor);
-		return ResponseEntity.ok(new TutorAlteracaoDTO(tutor));
+	public ResponseEntity<TutorListagemDTO> put(@RequestBody @Valid TutorAlteracaoDTO dadosTutor) {
+		Cidade cidade = buscarPetPeloId(dadosTutor.cidadeId());
+		Tutor tutor = buscarTutorPeloId(dadosTutor.id());
+		tutor.atualizarInformações(dadosTutor, cidade);
+		return ResponseEntity.ok(new TutorListagemDTO(tutor));
 	}
 
 	@DeleteMapping("/{id}")
 	@Transactional
 	public ResponseEntity<String> delete(@PathVariable Long id) {
-		Optional<Tutor> tutor = repository.findById(id);
+		Optional<Tutor> tutor = tutorRepository.findById(id);
 		if(tutor.isEmpty()) { 
 			throw new EntityNotFoundException();
 		}
-		repository.deleteById(id);
+		tutorRepository.deleteById(id);
 		String mensagem = "Tutor com o id("+id+") foi excluído com sucesso.";
 		return ResponseEntity.ok(mensagem);
+	}
+	
+	private Tutor buscarTutorPeloId(Long id) {
+		return tutorRepository.findById(id).orElseThrow(() -> new EntityNotFoundException(
+				String.format("O tutor com ID %d não foi encontrado no banco de dados.", id)));
+	}
+	
+	private Cidade buscarPetPeloId(Long id) {
+		return cidadeRepository.findById(id).orElseThrow(() -> new EntityNotFoundException(
+				String.format("A cidade com ID %d não foi encontrado no banco de dados.", id)));
 	}
 }
