@@ -1,8 +1,11 @@
 package br.org.adopet.api.controller;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -15,6 +18,7 @@ import br.org.adopet.api.domain.model.Porte;
 import br.org.adopet.api.domain.repository.AbrigoRepository;
 import br.org.adopet.api.domain.repository.PetRepository;
 import br.org.adopet.api.domain.repository.PorteRepository;
+import jakarta.persistence.EntityNotFoundException;
 import jakarta.validation.Valid;
 
 @RestController
@@ -29,6 +33,17 @@ public class PetController {
 	
 	@Autowired
 	PorteRepository porteRepository;
+	
+	@GetMapping
+	public ResponseEntity<List<PetListagemDTO>> get(){
+		List<PetListagemDTO> pets = petRepository.findAll().stream().map(PetListagemDTO::new).toList();
+		if(pets.size() == 0) {
+			throw new EntityNotFoundException();
+		}
+		return ResponseEntity.ok(pets);
+	}
+	
+	
 	
 	@PostMapping
 	@Transactional

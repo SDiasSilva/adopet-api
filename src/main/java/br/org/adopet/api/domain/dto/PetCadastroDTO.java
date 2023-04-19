@@ -2,6 +2,8 @@ package br.org.adopet.api.domain.dto;
 
 import java.time.LocalDate;
 
+import org.hibernate.validator.constraints.URL;
+
 import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -17,6 +19,6 @@ public record PetCadastroDTO(
 		String descricao,
 		@NotNull
 		LocalDate dataNascimento,
-		@NotBlank
+		@NotBlank @URL
 		String foto) {
 }
