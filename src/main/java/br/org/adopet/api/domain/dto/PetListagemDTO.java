@@ -3,9 +3,11 @@ package br.org.adopet.api.domain.dto;
 import java.time.LocalDate;
 import java.time.Period;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import br.org.adopet.api.domain.model.Pet;
 
-public record PetListagemDTO(Long id, Long abrigoId, String nome, String porte, String descricao, Boolean adotado,
+public record PetListagemDTO(Long id, @JsonProperty("abrigo_id") Long abrigoId, String nome, String porte, String descricao, Boolean adotado,
 		String idade, String cidade, String estado, String foto) {
 
 	public PetListagemDTO(Pet pet) {
