@@ -3,8 +3,10 @@ package br.org.adopet.api.controller;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -14,6 +16,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import br.org.adopet.api.domain.dto.MensagemDTO;
 import br.org.adopet.api.domain.dto.PetAlteracaoDTO;
 import br.org.adopet.api.domain.dto.PetCadastroDTO;
 import br.org.adopet.api.domain.dto.PetListagemDTO;
@@ -75,6 +78,15 @@ public class PetController {
 		return atualizarInformacoes(dadosPet);
 	}
 
+	@DeleteMapping("/{id}")
+	@Transactional
+	public ResponseEntity<MensagemDTO> delete(@PathVariable Long id) {
+		Pet pet = buscarPetPeloId(id);
+		petRepository.delete(pet);
+		MensagemDTO mensagemDTO = new MensagemDTO(String.format("O pet com ID %d foi excluído com sucesso.", id));
+		return ResponseEntity.ok(mensagemDTO);
+	}
+	
 	private ResponseEntity<PetListagemDTO> atualizarInformacoes(PetAlteracaoDTO dadosPet) {
 		Porte porte = buscarPortePeloId(dadosPet.porteId());
 		Pet pet = buscarPetPeloId(dadosPet.id());
