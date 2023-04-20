@@ -1,7 +1,6 @@
 package br.org.adopet.api.controller;
 
 import java.util.List;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -14,8 +13,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import br.org.adopet.api.domain.model.Abrigo;
 import br.org.adopet.api.domain.model.Cidade;
-import br.org.adopet.api.domain.repository.AbrigoRepository;
-import br.org.adopet.api.domain.repository.CidadeRepository;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
@@ -26,34 +23,28 @@ import br.org.adopet.api.domain.dto.AbrigoAlteracaoDTO;
 
 @RestController
 @RequestMapping("abrigos")
-public class AbrigoController {
-
-	@Autowired
-	AbrigoRepository abrigoRepository;
-
-	@Autowired
-	CidadeRepository cidadeRepository;
+public class AbrigoController extends BaseController{
 
 	@GetMapping
 	public ResponseEntity<List<AbrigoDetalhamentoDTO>> get() {
-		List<AbrigoDetalhamentoDTO> abrigos = abrigoRepository.findAll().stream().map(AbrigoDetalhamentoDTO::new).toList();
+		List<AbrigoDetalhamentoDTO> abrigos = super.abrigoRepository().findAll().stream().map(AbrigoDetalhamentoDTO::new).toList();
 		if (abrigos.size() == 0) {
-			throw new EntityNotFoundException("Nenhum abrigo ");
+			throw new EntityNotFoundException();
 		}
 		return ResponseEntity.ok(abrigos);
 	}
 
 	@GetMapping("/{id}")
 	public ResponseEntity<AbrigoDetalhamentoDTO> get(@PathVariable Long id) {
-		Abrigo abrigo = buscarAbrigoPeloId(id);
+		Abrigo abrigo = super.buscarEntidade(id, super.abrigoRepository(), "abrigo");
 		return ResponseEntity.ok(new AbrigoDetalhamentoDTO(abrigo));
 	}
 
 	@PostMapping
 	@Transactional
 	public ResponseEntity<AbrigoDetalhamentoDTO> post(@RequestBody @Valid AbrigoCadastroDTO dadosAbrigo) {
-		Cidade cidade = buscarCidadePeloId(dadosAbrigo.cidadeId());
-		Abrigo abrigoCriado = abrigoRepository.save(new Abrigo(dadosAbrigo, cidade));
+		Cidade cidade = super.buscarEntidade(dadosAbrigo.cidadeId(), super.cidadeRepository(), "cidade");
+		Abrigo abrigoCriado = super.abrigoRepository().save(new Abrigo(dadosAbrigo, cidade));
 		return ResponseEntity.ok(new AbrigoDetalhamentoDTO(abrigoCriado));
 	}
 
@@ -71,29 +62,16 @@ public class AbrigoController {
 
 	@DeleteMapping("/{id}")
 	public ResponseEntity<MensagemDTO> delete(@PathVariable Long id){
-		Abrigo abrigo = buscarAbrigoPeloId(id);
-		abrigoRepository.delete(abrigo);
+		Abrigo abrigo = super.buscarEntidade(id, super.abrigoRepository(), "abrigo");
+		super.abrigoRepository().delete(abrigo);
 		MensagemDTO mensagemDTO = new MensagemDTO(String.format("O Abrigo com ID %d foi excluído com sucesso.", id));
 		return ResponseEntity.ok(mensagemDTO);
 	}
 	
 	private ResponseEntity<AbrigoDetalhamentoDTO> alterarAbrigo(AbrigoAlteracaoDTO dadosAbrigo) {
-		Cidade cidade = buscarCidadePeloId(dadosAbrigo.cidadeId());
-		Abrigo abrigo = buscarAbrigoPeloId(dadosAbrigo.id());
+		Cidade cidade = super.buscarEntidade(dadosAbrigo.cidadeId(), super.cidadeRepository(), "cidade");
+		Abrigo abrigo = super.buscarEntidade(dadosAbrigo.id(), super.abrigoRepository(), "abrigo");
 		abrigo.atualizarInformacoes(dadosAbrigo, cidade);
 		return ResponseEntity.ok(new AbrigoDetalhamentoDTO(abrigo));
-	}
-
-	private Abrigo buscarAbrigoPeloId(Long id) {
-		return abrigoRepository.findById(id).orElseThrow(() -> new EntityNotFoundException(
-				String.format("O abrigo com ID %d não foi encontrado no banco de dados.", id)));
-	}
-
-	private Cidade buscarCidadePeloId(Long id) {
-		if (id == null) {
-			return null;
-		}
-		return cidadeRepository.findById(id).orElseThrow(() -> new EntityNotFoundException(
-				String.format("A cidade com ID %d não foi encontrado no banco de dados.", id)));
 	}
 }
