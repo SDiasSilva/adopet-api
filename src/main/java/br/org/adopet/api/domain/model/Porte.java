@@ -24,7 +24,7 @@ public class Porte {
 	@Id @GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 	private String descricao;
-	@OneToMany
+	@OneToMany(mappedBy = "porte")
 	private List<Pet> pets = new ArrayList<Pet>();
 	
 	public void adicionarPet(Pet pet) {

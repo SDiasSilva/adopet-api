@@ -77,4 +77,10 @@ public class Pet {
 		}
 	}
 
+	public void cancelarAdocao() {
+		if(isAdotado()) {
+			this.adotado = false;
+		}
+	}
+
 }

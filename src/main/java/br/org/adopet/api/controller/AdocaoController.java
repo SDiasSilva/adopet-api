@@ -3,6 +3,8 @@ package br.org.adopet.api.controller;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -10,6 +12,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import br.org.adopet.api.domain.dto.AdocaoCadastro;
 import br.org.adopet.api.domain.dto.AdocaoDetalhamentoDTO;
+import br.org.adopet.api.domain.dto.MensagemDTO;
 import br.org.adopet.api.domain.model.Adocao;
 import br.org.adopet.api.domain.model.Pet;
 import br.org.adopet.api.domain.model.Tutor;
@@ -39,6 +42,21 @@ public class AdocaoController {
 		Tutor tutor = buscarTutorPeloId(dadosAdocao.tutorId());
 		Adocao adocao = adocaoRepository.save(new Adocao(pet, tutor));
 		return ResponseEntity.ok(new AdocaoDetalhamentoDTO(adocao));
+	}
+	
+	@DeleteMapping("/{id}")
+	@Transactional
+	public ResponseEntity<MensagemDTO> delete(@PathVariable Long id){
+		Adocao adocao = buscarAdocaoPeloId(id);
+		adocao.cancelar();
+		adocaoRepository.delete(adocao);
+		MensagemDTO mensagemDTO = new MensagemDTO(String.format("A adoção com o ID %d foi excluído com sucesso.", id));
+		return ResponseEntity.ok(mensagemDTO);
+	}
+	
+	private Adocao buscarAdocaoPeloId(Long id) {
+		return adocaoRepository.findById(id).orElseThrow(() -> new EntityNotFoundException(
+				String.format("A adoção com ID %d não foi encontrado no banco de dados.", id)));
 	}
 	
 	private Tutor buscarTutorPeloId(Long id) {

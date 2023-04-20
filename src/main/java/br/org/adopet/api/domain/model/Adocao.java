@@ -35,4 +35,9 @@ public class Adocao {
 		this.tutor.adicionarAdocao(this);
 		this.data = LocalDate.now();
 	}
+
+	public void cancelar() {
+		this.tutor.removerAdocao(this);
+		this.pet.cancelarAdocao();
+	}
 }

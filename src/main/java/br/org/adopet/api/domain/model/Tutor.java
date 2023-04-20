@@ -36,7 +36,7 @@ public class Tutor {
 	@ManyToOne
 	private Cidade cidade;
 	private String sobre;
-	@OneToMany
+	@OneToMany(mappedBy = "tutor")
 	private List<Adocao> adocoes = new ArrayList<Adocao>();
 
 	public Tutor(TutorCadastroDTO dadosTutor) {
@@ -91,5 +91,9 @@ public class Tutor {
 	
 	public void adicionarAdocao(Adocao adocao) {
 		this.adocoes.add(adocao);
+	}
+
+	public void removerAdocao(Adocao adocao) {
+		this.adocoes.remove(adocao);
 	}
 }

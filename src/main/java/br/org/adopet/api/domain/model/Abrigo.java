@@ -33,7 +33,7 @@ public class Abrigo {
 	private Contato contato;
 	@ManyToOne
 	private Cidade cidade;
-	@OneToMany
+	@OneToMany(mappedBy = "abrigo")
 	private List<Pet> pets = new ArrayList<Pet>();
 
 	public Abrigo(AbrigoCadastroDTO dadosAbrigo, Cidade cidade) {
