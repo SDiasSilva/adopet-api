@@ -22,7 +22,7 @@ public class AdocaoController extends BaseController{
 	
 	@PostMapping
 	@Transactional
-	public ResponseEntity<AdocaoDetalhamentoDTO> post(@RequestBody @Valid AdocaoCadastro dadosAdocao){
+	public ResponseEntity<AdocaoDetalhamentoDTO> postCriarAdocao(@RequestBody @Valid AdocaoCadastro dadosAdocao){
 		Pet pet = super.buscarEntidade(dadosAdocao.petId(), super.petRepository(), "pet");
 		Tutor tutor = super.buscarEntidade(dadosAdocao.tutorId(), super.tutorRepository(), "tutor");
 		Adocao adocao = super.adocaoRepository().save(new Adocao(pet, tutor));
@@ -31,7 +31,7 @@ public class AdocaoController extends BaseController{
 	
 	@DeleteMapping("/{id}")
 	@Transactional
-	public ResponseEntity<MensagemDTO> delete(@PathVariable Long id){
+	public ResponseEntity<MensagemDTO> deleteAdocao(@PathVariable Long id){
 		Adocao adocao = super.buscarEntidade(id, super.adocaoRepository(), "adocao");
 		adocao.cancelar();
 		super.adocaoRepository().delete(adocao);

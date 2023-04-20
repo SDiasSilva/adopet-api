@@ -26,7 +26,7 @@ import jakarta.validation.Valid;
 public class TutorController extends BaseController{
 
 	@GetMapping
-	public ResponseEntity<List<TutorDetalhamentoDTO>> get() {
+	public ResponseEntity<List<TutorDetalhamentoDTO>> getTodosOsTutores() {
 		List<TutorDetalhamentoDTO> tutores = super.tutorRepository().findAll().stream().map(TutorDetalhamentoDTO::new).toList();
 		if (tutores.size() == 0) {
 			throw new EntityNotFoundException();
@@ -35,33 +35,33 @@ public class TutorController extends BaseController{
 	}
 
 	@GetMapping("/{id}")
-	public ResponseEntity<TutorDetalhamentoDTO> get(@PathVariable Long id) {
+	public ResponseEntity<TutorDetalhamentoDTO> getTutorPeloId(@PathVariable Long id) {
 		Tutor tutor = super.buscarEntidade(id, super.tutorRepository(), "tutor");
 		return ResponseEntity.ok(new TutorDetalhamentoDTO(tutor));
 	}
 
 	@PostMapping
 	@Transactional
-	public ResponseEntity<TutorDetalhamentoDTO> post(@RequestBody @Valid TutorCadastroDTO dadosTutor) {
+	public ResponseEntity<TutorDetalhamentoDTO> postCadastrarTutor(@RequestBody @Valid TutorCadastroDTO dadosTutor) {
 		Tutor tutorCriado = super.tutorRepository().save(new Tutor(dadosTutor));
 		return ResponseEntity.ok(new TutorDetalhamentoDTO(tutorCriado));
 	}
 
 	@PutMapping
 	@Transactional
-	public ResponseEntity<TutorDetalhamentoDTO> put(@RequestBody @Valid TutorAlteracaoDTO dadosTutor) {
+	public ResponseEntity<TutorDetalhamentoDTO> putAtualizarTutor(@RequestBody @Valid TutorAlteracaoDTO dadosTutor) {
 		return atualizarTutor(dadosTutor);
 	}
 
 	@PatchMapping
 	@Transactional
-	public ResponseEntity<TutorDetalhamentoDTO> patch(@RequestBody @Valid TutorAlteracaoDTO dadosTutor) {
+	public ResponseEntity<TutorDetalhamentoDTO> patchAtualizarTutor(@RequestBody @Valid TutorAlteracaoDTO dadosTutor) {
 		return atualizarTutor(dadosTutor);
 	}
 
 	@DeleteMapping("/{id}")
 	@Transactional
-	public ResponseEntity<MensagemDTO> delete(@PathVariable Long id) {
+	public ResponseEntity<MensagemDTO> deleteTutor(@PathVariable Long id) {
 		Tutor tutor = super.buscarEntidade(id, super.tutorRepository(), "tutor");
 		super.tutorRepository().delete(tutor);
 		MensagemDTO mensagemDTO = new MensagemDTO(String.format("O tutor com ID %d foi excluído com sucesso.", id));

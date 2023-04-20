@@ -1,9 +1,10 @@
 package br.org.adopet.api.domain.repository;
 
 import org.springframework.beans.factory.annotation.Autowired;
-
+import org.springframework.stereotype.Component;
 import lombok.Getter;
 
+@Component
 @Getter
 public class Repositories {
 	@Autowired

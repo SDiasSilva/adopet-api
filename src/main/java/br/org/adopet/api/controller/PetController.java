@@ -28,7 +28,7 @@ import jakarta.validation.Valid;
 public class PetController extends BaseController {
 
 	@GetMapping
-	public ResponseEntity<List<PetDetalhamentoDTO>> get() {
+	public ResponseEntity<List<PetDetalhamentoDTO>> getTodosOsPets() {
 		List<PetDetalhamentoDTO> pets = super.petRepository().findAllByAdotadoIsFalse().stream()
 				.map(PetDetalhamentoDTO::new).toList();
 		if (pets.size() == 0) {
@@ -38,14 +38,14 @@ public class PetController extends BaseController {
 	}
 
 	@GetMapping("/{id}")
-	public ResponseEntity<PetDetalhamentoDTO> get(@PathVariable Long id) {
+	public ResponseEntity<PetDetalhamentoDTO> getPetPeloId(@PathVariable Long id) {
 		Pet pet = buscarPetPeloId(id);
 		return ResponseEntity.ok(new PetDetalhamentoDTO(pet));
 	}
 
 	@PostMapping
 	@Transactional
-	public ResponseEntity<PetDetalhamentoDTO> post(@RequestBody @Valid PetCadastroDTO dadosPet) {
+	public ResponseEntity<PetDetalhamentoDTO> postCadastrarPet(@RequestBody @Valid PetCadastroDTO dadosPet) {
 		Abrigo abrigo = super.buscarEntidade(dadosPet.abrigoId(), super.abrigoRepository(), "abrigo");
 		Porte porte = super.buscarEntidade(dadosPet.porteId(), super.porteRepository(), "porte");
 		Pet pet = super.petRepository().save(new Pet(dadosPet, abrigo, porte));
@@ -54,19 +54,19 @@ public class PetController extends BaseController {
 
 	@PutMapping
 	@Transactional
-	public ResponseEntity<PetDetalhamentoDTO> put(@RequestBody @Valid PetAlteracaoDTO dadosPet) {
+	public ResponseEntity<PetDetalhamentoDTO> putAtualizarPet(@RequestBody @Valid PetAlteracaoDTO dadosPet) {
 		return atualizarPet(dadosPet);
 	}
 
 	@PatchMapping
 	@Transactional
-	public ResponseEntity<PetDetalhamentoDTO> patch(@RequestBody @Valid PetAlteracaoDTO dadosPet) {
+	public ResponseEntity<PetDetalhamentoDTO> patchAtualizarPet(@RequestBody @Valid PetAlteracaoDTO dadosPet) {
 		return atualizarPet(dadosPet);
 	}
 
 	@DeleteMapping("/{id}")
 	@Transactional
-	public ResponseEntity<MensagemDTO> delete(@PathVariable Long id) {
+	public ResponseEntity<MensagemDTO> deletePet(@PathVariable Long id) {
 		Pet pet = buscarPetPeloId(id);
 		super.petRepository().delete(pet);
 		MensagemDTO mensagemDTO = new MensagemDTO(String.format("O pet com ID %d foi excluído com sucesso.", id));
