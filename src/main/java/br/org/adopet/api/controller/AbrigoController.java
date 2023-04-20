@@ -20,7 +20,7 @@ import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
 import br.org.adopet.api.domain.dto.AbrigoCadastroDTO;
-import br.org.adopet.api.domain.dto.AbrigoListagemDTO;
+import br.org.adopet.api.domain.dto.AbrigoDetalhamentoDTO;
 import br.org.adopet.api.domain.dto.MensagemDTO;
 import br.org.adopet.api.domain.dto.AbrigoAlteracaoDTO;
 
@@ -35,8 +35,8 @@ public class AbrigoController {
 	CidadeRepository cidadeRepository;
 
 	@GetMapping
-	public ResponseEntity<List<AbrigoListagemDTO>> get() {
-		List<AbrigoListagemDTO> abrigos = abrigoRepository.findAll().stream().map(AbrigoListagemDTO::new).toList();
+	public ResponseEntity<List<AbrigoDetalhamentoDTO>> get() {
+		List<AbrigoDetalhamentoDTO> abrigos = abrigoRepository.findAll().stream().map(AbrigoDetalhamentoDTO::new).toList();
 		if (abrigos.size() == 0) {
 			throw new EntityNotFoundException("Nenhum abrigo ");
 		}
@@ -44,28 +44,28 @@ public class AbrigoController {
 	}
 
 	@GetMapping("/{id}")
-	public ResponseEntity<AbrigoListagemDTO> get(@PathVariable Long id) {
+	public ResponseEntity<AbrigoDetalhamentoDTO> get(@PathVariable Long id) {
 		Abrigo abrigo = buscarAbrigoPeloId(id);
-		return ResponseEntity.ok(new AbrigoListagemDTO(abrigo));
+		return ResponseEntity.ok(new AbrigoDetalhamentoDTO(abrigo));
 	}
 
 	@PostMapping
 	@Transactional
-	public ResponseEntity<AbrigoListagemDTO> post(@RequestBody @Valid AbrigoCadastroDTO dadosAbrigo) {
+	public ResponseEntity<AbrigoDetalhamentoDTO> post(@RequestBody @Valid AbrigoCadastroDTO dadosAbrigo) {
 		Cidade cidade = buscarCidadePeloId(dadosAbrigo.cidadeId());
 		Abrigo abrigoCriado = abrigoRepository.save(new Abrigo(dadosAbrigo, cidade));
-		return ResponseEntity.ok(new AbrigoListagemDTO(abrigoCriado));
+		return ResponseEntity.ok(new AbrigoDetalhamentoDTO(abrigoCriado));
 	}
 
 	@PutMapping
 	@Transactional
-	public ResponseEntity<AbrigoListagemDTO> put(@RequestBody @Valid AbrigoAlteracaoDTO dadosAbrigo) {
+	public ResponseEntity<AbrigoDetalhamentoDTO> put(@RequestBody @Valid AbrigoAlteracaoDTO dadosAbrigo) {
 		return alterarAbrigo(dadosAbrigo);
 	}
 	
 	@PatchMapping
 	@Transactional
-	public ResponseEntity<AbrigoListagemDTO> patch(@RequestBody @Valid AbrigoAlteracaoDTO dadosAbrigo) {
+	public ResponseEntity<AbrigoDetalhamentoDTO> patch(@RequestBody @Valid AbrigoAlteracaoDTO dadosAbrigo) {
 		return alterarAbrigo(dadosAbrigo);
 	}
 
@@ -77,11 +77,11 @@ public class AbrigoController {
 		return ResponseEntity.ok(mensagemDTO);
 	}
 	
-	private ResponseEntity<AbrigoListagemDTO> alterarAbrigo(AbrigoAlteracaoDTO dadosAbrigo) {
+	private ResponseEntity<AbrigoDetalhamentoDTO> alterarAbrigo(AbrigoAlteracaoDTO dadosAbrigo) {
 		Cidade cidade = buscarCidadePeloId(dadosAbrigo.cidadeId());
 		Abrigo abrigo = buscarAbrigoPeloId(dadosAbrigo.id());
 		abrigo.atualizarInformacoes(dadosAbrigo, cidade);
-		return ResponseEntity.ok(new AbrigoListagemDTO(abrigo));
+		return ResponseEntity.ok(new AbrigoDetalhamentoDTO(abrigo));
 	}
 
 	private Abrigo buscarAbrigoPeloId(Long id) {

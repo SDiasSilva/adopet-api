@@ -2,15 +2,15 @@ package br.org.adopet.api.infra;
 
 import java.sql.SQLIntegrityConstraintViolationException;
 import java.util.List;
-
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
-
 import br.org.adopet.api.domain.dto.ErroDeBuscaDTO;
+import br.org.adopet.api.domain.dto.MensagemDTO;
+import br.org.adopet.api.exception.AdocaoException;
 import jakarta.persistence.EntityNotFoundException;
 
 @RestControllerAdvice
@@ -33,9 +33,15 @@ public class TratadorDeErros {
 	}
 
 	@ExceptionHandler(SQLIntegrityConstraintViolationException.class)
-	public ResponseEntity<String> tratarErroDeIntegridade(SQLIntegrityConstraintViolationException ex) {
-		String sqlState = "Erro na query sql: " + ex.getMessage();
-		return ResponseEntity.badRequest().body(sqlState);
+	public ResponseEntity<ErroDeBuscaDTO> tratarErroDeIntegridade(SQLIntegrityConstraintViolationException ex) {
+		ErroDeBuscaDTO erroDeBuscaDTO = new ErroDeBuscaDTO(ex.getMessage());
+		return ResponseEntity.badRequest().body(erroDeBuscaDTO);
+	}
+	
+	@ExceptionHandler(AdocaoException.class)
+	public ResponseEntity<MensagemDTO> tratarPetJaAdotado(AdocaoException ex){
+		MensagemDTO mensagemDTO = new MensagemDTO(ex.getMessage());
+		return new ResponseEntity<MensagemDTO>(mensagemDTO, HttpStatus.CONFLICT);
 	}
 
 	private record DadosErroValidacao(String campo, String mensagem) {

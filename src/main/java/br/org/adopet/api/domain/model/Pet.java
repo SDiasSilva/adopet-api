@@ -1,9 +1,9 @@
 package br.org.adopet.api.domain.model;
 
 import java.time.LocalDate;
-
 import br.org.adopet.api.domain.dto.PetAlteracaoDTO;
 import br.org.adopet.api.domain.dto.PetCadastroDTO;
+import br.org.adopet.api.exception.AdocaoException;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -36,14 +36,23 @@ public class Pet {
 	
 	public Pet(PetCadastroDTO dadosPet, Abrigo abrigo, Porte porte) {
 		this.abrigo = abrigo;
+		this.abrigo.adicionarPet(this);
 		this.nome = dadosPet.nome();
 		this.porte = porte;
+		this.porte.adicionarPet(this);
 		this.descricao = dadosPet.descricao();
 		this.dataNascimento = dadosPet.dataNascimento();
 		this.foto = dadosPet.foto();
 	}
 	
+	public Boolean isAdotado() {
+		return this.adotado;
+	}
+	
 	public void adotar() {
+		if(isAdotado()) {
+			throw new AdocaoException(this.id);
+		}
 		this.adotado = true;
 	}
 

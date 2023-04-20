@@ -7,10 +7,10 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 import br.org.adopet.api.domain.model.Pet;
 
-public record PetListagemDTO(Long id, @JsonProperty("abrigo_id") Long abrigoId, String nome, String porte, String descricao, Boolean adotado,
+public record PetDetalhamentoDTO(Long id, @JsonProperty("abrigo_id") Long abrigoId, String nome, String porte, String descricao, Boolean adotado,
 		String idade, String cidade, String estado, String foto) {
 
-	public PetListagemDTO(Pet pet) {
+	public PetDetalhamentoDTO(Pet pet) {
 		this(pet.getId(), pet.getAbrigo().getId(), pet.getNome(), pet.getPorte().getDescricao(), pet.getDescricao(),
 				pet.getAdotado(), getIdade(pet.getDataNascimento()), pet.getAbrigo().getCidade().getNome(),
 				pet.getAbrigo().getCidade().getEstado().getSigla(), pet.getFoto());

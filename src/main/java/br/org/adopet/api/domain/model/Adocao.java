@@ -1,13 +1,12 @@
 package br.org.adopet.api.domain.model;
 
-import java.util.ArrayList;
-import java.util.List;
-
+import java.time.LocalDate;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.OneToMany;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
@@ -15,19 +14,25 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @Entity
-@Table(name = "portes")
+@Table(name = "adocoes")
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
-@EqualsAndHashCode(of = "id")
-public class Porte {
+@EqualsAndHashCode
+public class Adocao {
 	@Id @GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
-	private String descricao;
-	@OneToMany
-	private List<Pet> pets = new ArrayList<Pet>();
+	@OneToOne
+	private Pet pet;
+	@ManyToOne
+	private Tutor tutor;
+	private LocalDate data;
 	
-	public void adicionarPet(Pet pet) {
-		this.pets.add(pet);
+	public Adocao(Pet pet, Tutor tutor) {
+		this.pet = pet;
+		this.pet.adotar();
+		this.tutor = tutor;
+		this.tutor.adicionarAdocao(this);
+		this.data = LocalDate.now();
 	}
 }

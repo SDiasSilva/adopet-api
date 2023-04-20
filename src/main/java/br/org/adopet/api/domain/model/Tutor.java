@@ -1,5 +1,7 @@
 package br.org.adopet.api.domain.model;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.function.Function;
 
 import br.org.adopet.api.domain.dto.TutorAlteracaoDTO;
@@ -10,6 +12,7 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
@@ -33,6 +36,8 @@ public class Tutor {
 	@ManyToOne
 	private Cidade cidade;
 	private String sobre;
+	@OneToMany
+	private List<Adocao> adocoes = new ArrayList<Adocao>();
 
 	public Tutor(TutorCadastroDTO dadosTutor) {
 		this.contato = new Contato(dadosTutor.nome(), dadosTutor.email());
@@ -82,5 +87,9 @@ public class Tutor {
 			return null;
 		}
 		return atributoGetter.apply(this.cidade);
+	}
+	
+	public void adicionarAdocao(Adocao adocao) {
+		this.adocoes.add(adocao);
 	}
 }

@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.RestController;
 import br.org.adopet.api.domain.dto.MensagemDTO;
 import br.org.adopet.api.domain.dto.TutorAlteracaoDTO;
 import br.org.adopet.api.domain.dto.TutorCadastroDTO;
-import br.org.adopet.api.domain.dto.TutorListagemDTO;
+import br.org.adopet.api.domain.dto.TutorDetalhamentoDTO;
 import br.org.adopet.api.domain.model.Cidade;
 import br.org.adopet.api.domain.model.Tutor;
 import br.org.adopet.api.domain.repository.CidadeRepository;
@@ -35,8 +35,8 @@ public class TutorController {
 	private CidadeRepository cidadeRepository;
 
 	@GetMapping
-	public ResponseEntity<List<TutorListagemDTO>> get() {
-		List<TutorListagemDTO> tutores = tutorRepository.findAll().stream().map(TutorListagemDTO::new).toList();
+	public ResponseEntity<List<TutorDetalhamentoDTO>> get() {
+		List<TutorDetalhamentoDTO> tutores = tutorRepository.findAll().stream().map(TutorDetalhamentoDTO::new).toList();
 		if (tutores.size() == 0) {
 			throw new EntityNotFoundException();
 		}
@@ -44,27 +44,27 @@ public class TutorController {
 	}
 
 	@GetMapping("/{id}")
-	public ResponseEntity<TutorListagemDTO> get(@PathVariable Long id) {
+	public ResponseEntity<TutorDetalhamentoDTO> get(@PathVariable Long id) {
 		Tutor tutor = buscarTutorPeloId(id);
-		return ResponseEntity.ok(new TutorListagemDTO(tutor));
+		return ResponseEntity.ok(new TutorDetalhamentoDTO(tutor));
 	}
 
 	@PostMapping
 	@Transactional
-	public ResponseEntity<TutorListagemDTO> post(@RequestBody @Valid TutorCadastroDTO dadosTutor) {
+	public ResponseEntity<TutorDetalhamentoDTO> post(@RequestBody @Valid TutorCadastroDTO dadosTutor) {
 		Tutor tutorCriado = tutorRepository.save(new Tutor(dadosTutor));
-		return ResponseEntity.ok(new TutorListagemDTO(tutorCriado));
+		return ResponseEntity.ok(new TutorDetalhamentoDTO(tutorCriado));
 	}
 
 	@PutMapping
 	@Transactional
-	public ResponseEntity<TutorListagemDTO> put(@RequestBody @Valid TutorAlteracaoDTO dadosTutor) {
+	public ResponseEntity<TutorDetalhamentoDTO> put(@RequestBody @Valid TutorAlteracaoDTO dadosTutor) {
 		return atualizarTutor(dadosTutor);
 	}
 
 	@PatchMapping
 	@Transactional
-	public ResponseEntity<TutorListagemDTO> patch(@RequestBody @Valid TutorAlteracaoDTO dadosTutor) {
+	public ResponseEntity<TutorDetalhamentoDTO> patch(@RequestBody @Valid TutorAlteracaoDTO dadosTutor) {
 		return atualizarTutor(dadosTutor);
 	}
 
@@ -77,11 +77,11 @@ public class TutorController {
 		return ResponseEntity.ok(mensagemDTO);
 	}
 
-	private ResponseEntity<TutorListagemDTO> atualizarTutor(TutorAlteracaoDTO dadosTutor) {
+	private ResponseEntity<TutorDetalhamentoDTO> atualizarTutor(TutorAlteracaoDTO dadosTutor) {
 		Tutor tutor = buscarTutorPeloId(dadosTutor.id());
 		Cidade cidade = buscarCidadePeloId(dadosTutor.cidadeId());
 		tutor.atualizarInformações(dadosTutor, cidade);
-		return ResponseEntity.ok(new TutorListagemDTO(tutor));
+		return ResponseEntity.ok(new TutorDetalhamentoDTO(tutor));
 	}
 
 	private Tutor buscarTutorPeloId(Long id) {

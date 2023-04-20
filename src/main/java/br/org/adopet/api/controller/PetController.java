@@ -17,13 +17,14 @@ import org.springframework.web.bind.annotation.RestController;
 import br.org.adopet.api.domain.dto.MensagemDTO;
 import br.org.adopet.api.domain.dto.PetAlteracaoDTO;
 import br.org.adopet.api.domain.dto.PetCadastroDTO;
-import br.org.adopet.api.domain.dto.PetListagemDTO;
+import br.org.adopet.api.domain.dto.PetDetalhamentoDTO;
 import br.org.adopet.api.domain.model.Abrigo;
 import br.org.adopet.api.domain.model.Pet;
 import br.org.adopet.api.domain.model.Porte;
 import br.org.adopet.api.domain.repository.AbrigoRepository;
 import br.org.adopet.api.domain.repository.PetRepository;
 import br.org.adopet.api.domain.repository.PorteRepository;
+import br.org.adopet.api.exception.AdocaoException;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.validation.Valid;
 
@@ -41,8 +42,8 @@ public class PetController {
 	PorteRepository porteRepository;
 
 	@GetMapping
-	public ResponseEntity<List<PetListagemDTO>> get() {
-		List<PetListagemDTO> pets = petRepository.findAll().stream().map(PetListagemDTO::new).toList();
+	public ResponseEntity<List<PetDetalhamentoDTO>> get() {
+		List<PetDetalhamentoDTO> pets = petRepository.findAllByAdotadoIsFalse().stream().map(PetDetalhamentoDTO::new).toList();
 		if (pets.size() == 0) {
 			throw new EntityNotFoundException();
 		}
@@ -50,29 +51,29 @@ public class PetController {
 	}
 
 	@GetMapping("/{id}")
-	public ResponseEntity<PetListagemDTO> get(@PathVariable Long id) {
+	public ResponseEntity<PetDetalhamentoDTO> get(@PathVariable Long id) {
 		Pet pet = buscarPetPeloId(id);
-		return ResponseEntity.ok(new PetListagemDTO(pet));
+		return ResponseEntity.ok(new PetDetalhamentoDTO(pet));
 	}
 
 	@PostMapping
 	@Transactional
-	public ResponseEntity<PetListagemDTO> post(@RequestBody @Valid PetCadastroDTO dadosPet) {
+	public ResponseEntity<PetDetalhamentoDTO> post(@RequestBody @Valid PetCadastroDTO dadosPet) {
 		Abrigo abrigo = abrigoRepository.getReferenceById(dadosPet.abrigoId());
 		Porte porte = porteRepository.getReferenceById(dadosPet.porteId());
 		Pet pet = petRepository.save(new Pet(dadosPet, abrigo, porte));
-		return ResponseEntity.ok(new PetListagemDTO(pet));
+		return ResponseEntity.ok(new PetDetalhamentoDTO(pet));
 	}
 
 	@PutMapping
 	@Transactional
-	public ResponseEntity<PetListagemDTO> put(@RequestBody @Valid PetAlteracaoDTO dadosPet) {
+	public ResponseEntity<PetDetalhamentoDTO> put(@RequestBody @Valid PetAlteracaoDTO dadosPet) {
 		return atualizarInformacoes(dadosPet);
 	}
 
 	@PatchMapping
 	@Transactional
-	public ResponseEntity<PetListagemDTO> patch(@RequestBody @Valid PetAlteracaoDTO dadosPet) {
+	public ResponseEntity<PetDetalhamentoDTO> patch(@RequestBody @Valid PetAlteracaoDTO dadosPet) {
 		return atualizarInformacoes(dadosPet);
 	}
 
@@ -85,16 +86,20 @@ public class PetController {
 		return ResponseEntity.ok(mensagemDTO);
 	}
 	
-	private ResponseEntity<PetListagemDTO> atualizarInformacoes(PetAlteracaoDTO dadosPet) {
+	private ResponseEntity<PetDetalhamentoDTO> atualizarInformacoes(PetAlteracaoDTO dadosPet) {
 		Porte porte = buscarPortePeloId(dadosPet.porteId());
 		Pet pet = buscarPetPeloId(dadosPet.id());
 		pet.atualizarInformacoes(dadosPet, porte);
-		return ResponseEntity.ok(new PetListagemDTO(pet));
+		return ResponseEntity.ok(new PetDetalhamentoDTO(pet));
 	}
 
 	private Pet buscarPetPeloId(Long id) {
-		return petRepository.findById(id).orElseThrow(() -> new EntityNotFoundException(
+		Pet pet = petRepository.findById(id).orElseThrow(() -> new EntityNotFoundException(
 				String.format("O pet com ID %d não foi encontrado no banco de dados.", id)));
+		if(pet.isAdotado()) {
+			throw new AdocaoException(id);
+		}
+		return pet;
 	}
 
 	private Porte buscarPortePeloId(Long id) {
