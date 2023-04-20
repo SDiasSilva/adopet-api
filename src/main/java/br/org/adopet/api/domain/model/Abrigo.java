@@ -1,6 +1,9 @@
 package br.org.adopet.api.domain.model;
 
 import br.org.adopet.api.domain.dto.AbrigoCadastroDTO;
+
+import java.util.function.Function;
+
 import br.org.adopet.api.domain.dto.AbrigoAlteracaoDTO;
 import jakarta.persistence.Embedded;
 import jakarta.persistence.Entity;
@@ -35,17 +38,44 @@ public class Abrigo {
 	}
 
 	public void atualizarInformacoes(AbrigoAlteracaoDTO dadosAbrigo, Cidade cidade) {
-		if(dadosAbrigo.nome() != null && !dadosAbrigo.nome().trim().isBlank()) {
+		if (dadosAbrigo.nome() != null && !dadosAbrigo.nome().trim().isBlank()) {
 			this.contato.setNome(dadosAbrigo.nome());
 		}
-		if(dadosAbrigo.email() != null && !dadosAbrigo.email().trim().isBlank()) {
+		if (dadosAbrigo.email() != null && !dadosAbrigo.email().trim().isBlank()) {
 			this.contato.setEmail(dadosAbrigo.email());
 		}
-		if(dadosAbrigo.telefone() != null && !dadosAbrigo.telefone().trim().isBlank()) {
+		if (dadosAbrigo.telefone() != null && !dadosAbrigo.telefone().trim().isBlank()) {
 			this.contato.setTelefone(dadosAbrigo.telefone());
 		}
-		if(cidade != null) {
+		if (cidade != null) {
 			this.cidade = cidade;
 		}
+	}
+
+	public String getNomeCidade() {
+		return getCidadeAtributo(Cidade::getNome);
+	}
+
+	public String getEstado() {
+		return getCidadeAtributo(cidade -> cidade.getEstado().getSigla());
+	}
+
+	public String getNome() {
+		return this.contato.getNome();
+	}
+
+	public String getTelefone() {
+		return this.contato.getTelefone();
+	}
+
+	public String getEmail() {
+		return this.contato.getEmail();
+	}
+
+	private String getCidadeAtributo(Function<Cidade, String> atributoGetter) {
+		if (this.cidade == null) {
+			return null;
+		}
+		return atributoGetter.apply(this.cidade);
 	}
 }
