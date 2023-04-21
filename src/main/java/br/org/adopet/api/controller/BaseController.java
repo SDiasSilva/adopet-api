@@ -10,6 +10,7 @@ import br.org.adopet.api.domain.repository.PetRepository;
 import br.org.adopet.api.domain.repository.PorteRepository;
 import br.org.adopet.api.domain.repository.Repositories;
 import br.org.adopet.api.domain.repository.TutorRepository;
+import br.org.adopet.api.domain.repository.UsuarioRepository;
 import jakarta.persistence.EntityNotFoundException;
 
 public abstract class BaseController {
@@ -38,6 +39,10 @@ public abstract class BaseController {
 	
 	protected TutorRepository tutorRepository() {
 		return this.repositories.getTutorRepository();
+	}
+	
+	protected UsuarioRepository usuarioRepository() {
+		return this.repositories.getUsuarioRepository();
 	}
 
 	protected <T> T buscarEntidade(Long id, JpaRepository<T, Long> repository, String nomeEntidade) {

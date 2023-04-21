@@ -8,20 +8,24 @@ import lombok.Getter;
 @Getter
 public class Repositories {
 	@Autowired
-	protected TutorRepository tutorRepository;
+	private TutorRepository tutorRepository;
 	
 	@Autowired
-	protected AbrigoRepository abrigoRepository;
+	private AbrigoRepository abrigoRepository;
 
 	@Autowired
-	protected CidadeRepository cidadeRepository;
+	private CidadeRepository cidadeRepository;
 	
 	@Autowired
-	protected PetRepository petRepository;
+	private PetRepository petRepository;
 
 	@Autowired
-	protected PorteRepository porteRepository;
+	private PorteRepository porteRepository;
 
 	@Autowired
-	protected AdocaoRepository adocaoRepository;
+	private AdocaoRepository adocaoRepository;
+	
+	@Autowired
+	private UsuarioRepository usuarioRepository;
+	
 }

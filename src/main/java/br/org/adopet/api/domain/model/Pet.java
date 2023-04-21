@@ -3,7 +3,7 @@ package br.org.adopet.api.domain.model;
 import java.time.LocalDate;
 import br.org.adopet.api.domain.dto.PetAlteracaoDTO;
 import br.org.adopet.api.domain.dto.PetCadastroDTO;
-import br.org.adopet.api.exception.AdocaoException;
+import br.org.adopet.api.infra.exception.AdocaoException;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;

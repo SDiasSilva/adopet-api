@@ -1,4 +1,4 @@
-package br.org.adopet.api.exception;
+package br.org.adopet.api.infra.exception;
 
 import jakarta.persistence.PersistenceException;
 

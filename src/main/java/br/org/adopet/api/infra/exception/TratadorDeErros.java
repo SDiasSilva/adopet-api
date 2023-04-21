@@ -1,4 +1,4 @@
-package br.org.adopet.api.infra;
+package br.org.adopet.api.infra.exception;
 
 import java.sql.SQLIntegrityConstraintViolationException;
 import java.util.List;
@@ -10,7 +10,6 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import br.org.adopet.api.domain.dto.ErroDeBuscaDTO;
 import br.org.adopet.api.domain.dto.MensagemDTO;
-import br.org.adopet.api.exception.AdocaoException;
 import jakarta.persistence.EntityNotFoundException;
 
 @RestControllerAdvice

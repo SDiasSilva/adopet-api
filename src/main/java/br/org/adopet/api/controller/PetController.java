@@ -19,7 +19,7 @@ import br.org.adopet.api.domain.dto.PetDetalhamentoDTO;
 import br.org.adopet.api.domain.model.Abrigo;
 import br.org.adopet.api.domain.model.Pet;
 import br.org.adopet.api.domain.model.Porte;
-import br.org.adopet.api.exception.AdocaoException;
+import br.org.adopet.api.infra.exception.AdocaoException;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.validation.Valid;
 
