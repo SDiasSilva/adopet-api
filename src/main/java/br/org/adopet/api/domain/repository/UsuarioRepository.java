@@ -7,6 +7,6 @@ import br.org.adopet.api.domain.model.Usuario;
 
 public interface UsuarioRepository extends JpaRepository<Usuario, Long>{
 
-	UserDetails findByEmail(String login);
+	UserDetails findByEmail(String email);
 
 }
