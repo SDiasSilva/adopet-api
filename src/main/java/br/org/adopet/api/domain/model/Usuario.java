@@ -2,7 +2,6 @@ package br.org.adopet.api.domain.model;
 
 import java.util.Collection;
 import java.util.List;
-
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -10,6 +9,7 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
@@ -34,10 +34,13 @@ public class Usuario implements UserDetails {
 	private Long id;
 	private String email;
 	private String senha;
-
-	public Usuario(String email, String senha) {
+	@ManyToOne
+	private Funcao funcao;
+	
+	public Usuario(String email, String senha, Funcao funcao) {
 		this.email = email;
 		this.senha = senha;
+		this.funcao = funcao;
 	}
 	
 	@Override

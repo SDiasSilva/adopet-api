@@ -28,4 +28,7 @@ public class Repositories {
 	@Autowired
 	private UsuarioRepository usuarioRepository;
 	
+	@Autowired
+	private FuncaoRepository funcaoRepository;
+	
 }

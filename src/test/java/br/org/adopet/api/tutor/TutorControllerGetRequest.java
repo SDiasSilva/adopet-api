@@ -14,8 +14,10 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.transaction.annotation.Transactional;
 
 import br.org.adopet.api.domain.dto.TutorCadastroDTO;
+import br.org.adopet.api.domain.model.Funcao;
 import br.org.adopet.api.domain.model.Tutor;
 import br.org.adopet.api.domain.model.Usuario;
+import br.org.adopet.api.domain.repository.FuncaoRepository;
 import br.org.adopet.api.domain.repository.TutorRepository;
 import br.org.adopet.api.domain.repository.UsuarioRepository;
 
@@ -32,11 +34,15 @@ class TutorControllerGetRequest {
 	
 	@Autowired
 	private UsuarioRepository usuarioRepository;
+
+	@Autowired
+	private FuncaoRepository funcaoRepository;
 	
 	@Test
 	void testGetTutorPeloId() throws Exception {
+		Funcao funcaoTutor = funcaoRepository.findByNome("TUTOR");
 		TutorCadastroDTO dadosTutor = new TutorCadastroDTO("John Doe", "johndoe@example.com", "Password123@");
-		Usuario usuario = usuarioRepository.save(new Usuario(dadosTutor.email(), dadosTutor.senha()));
+		Usuario usuario = usuarioRepository.save(new Usuario(dadosTutor.email(), dadosTutor.senha(), funcaoTutor));
 		Tutor tutor = tutorRepository.save(new Tutor(dadosTutor, usuario));
 		mockMvc.perform(get("/tutores/{id}", tutor.getId())).andExpect(status().isOk())
 				.andExpect(content().contentType(MediaType.APPLICATION_JSON)).andReturn();

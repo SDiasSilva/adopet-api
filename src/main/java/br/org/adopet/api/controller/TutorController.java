@@ -17,6 +17,7 @@ import br.org.adopet.api.domain.dto.TutorAlteracaoDTO;
 import br.org.adopet.api.domain.dto.TutorCadastroDTO;
 import br.org.adopet.api.domain.dto.TutorDetalhamentoDTO;
 import br.org.adopet.api.domain.model.Cidade;
+import br.org.adopet.api.domain.model.Funcao;
 import br.org.adopet.api.domain.model.Tutor;
 import br.org.adopet.api.domain.model.Usuario;
 import jakarta.persistence.EntityNotFoundException;
@@ -45,8 +46,9 @@ public class TutorController extends BaseController {
 	@PostMapping
 	@Transactional
 	public ResponseEntity<TutorDetalhamentoDTO> postCadastrarTutor(@RequestBody @Valid TutorCadastroDTO dadosTutor) {
+		Funcao funcaoTutor = super.funcaoRepository().findByNome("TUTOR");
 		Usuario usuarioCriado = super.usuarioRepository()
-				.save(new Usuario(dadosTutor.email(), super.encoder().encode(dadosTutor.senha())));
+				.save(new Usuario(dadosTutor.email(), super.encoder().encode(dadosTutor.senha()), funcaoTutor));
 		Tutor tutorCriado = super.tutorRepository().save(new Tutor(dadosTutor, usuarioCriado));
 		return ResponseEntity.ok(new TutorDetalhamentoDTO(tutorCriado));
 	}

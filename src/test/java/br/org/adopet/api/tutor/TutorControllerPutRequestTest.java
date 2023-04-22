@@ -19,9 +19,11 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import br.org.adopet.api.domain.dto.TutorAlteracaoDTO;
 import br.org.adopet.api.domain.dto.TutorCadastroDTO;
 import br.org.adopet.api.domain.model.Cidade;
+import br.org.adopet.api.domain.model.Funcao;
 import br.org.adopet.api.domain.model.Tutor;
 import br.org.adopet.api.domain.model.Usuario;
 import br.org.adopet.api.domain.repository.CidadeRepository;
+import br.org.adopet.api.domain.repository.FuncaoRepository;
 import br.org.adopet.api.domain.repository.TutorRepository;
 import br.org.adopet.api.domain.repository.UsuarioRepository;
 
@@ -43,15 +45,20 @@ class TutorControllerPutRequestTest {
 	@Autowired
 	private UsuarioRepository usuarioRepository;
 	
+	@Autowired
+	private FuncaoRepository funcaoRepository;
+	
 	private TutorCadastroDTO dadosTutor;
 	private Usuario usuario;
 	private Tutor tutor;
+	private Funcao funcaoTutor;
 
 	
 	@BeforeEach
 	public void inicializarVariaveis() {
 		dadosTutor = new TutorCadastroDTO("John Doe", "johndoe@example.com", "Password123@");
-		usuario = usuarioRepository.save(new Usuario(dadosTutor.email(), dadosTutor.senha()));
+		funcaoTutor = funcaoRepository.findByNome("TUTOR");
+		usuario = usuarioRepository.save(new Usuario(dadosTutor.email(), dadosTutor.senha(), funcaoTutor));
 		tutor = tutorRepository.save(new Tutor(dadosTutor, usuario));
 	}
 	

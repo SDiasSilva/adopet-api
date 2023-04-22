@@ -7,6 +7,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import br.org.adopet.api.domain.repository.AbrigoRepository;
 import br.org.adopet.api.domain.repository.AdocaoRepository;
 import br.org.adopet.api.domain.repository.CidadeRepository;
+import br.org.adopet.api.domain.repository.FuncaoRepository;
 import br.org.adopet.api.domain.repository.PetRepository;
 import br.org.adopet.api.domain.repository.PorteRepository;
 import br.org.adopet.api.domain.repository.Repositories;
@@ -52,6 +53,10 @@ public abstract class BaseController {
 	
 	protected UsuarioRepository usuarioRepository() {
 		return this.repositories.getUsuarioRepository();
+	}
+	
+	protected FuncaoRepository funcaoRepository() {
+		return this.repositories.getFuncaoRepository();
 	}
 
 	protected <T> T buscarEntidade(Long id, JpaRepository<T, Long> repository, String nomeEntidade) {
