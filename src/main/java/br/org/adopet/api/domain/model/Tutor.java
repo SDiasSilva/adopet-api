@@ -6,6 +6,7 @@ import java.util.function.Function;
 
 import br.org.adopet.api.domain.dto.TutorAlteracaoDTO;
 import br.org.adopet.api.domain.dto.TutorCadastroDTO;
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Embedded;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -13,6 +14,7 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
+import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
@@ -31,17 +33,18 @@ public class Tutor {
 	private Long id;
 	@Embedded
 	private Contato contato;
-	private String senha;
 	private String foto;
 	@ManyToOne
 	private Cidade cidade;
 	private String sobre;
+	@OneToOne(cascade = CascadeType.ALL)
+	private Usuario usuario;
 	@OneToMany(mappedBy = "tutor")
 	private List<Adocao> adocoes = new ArrayList<Adocao>();
 
-	public Tutor(TutorCadastroDTO dadosTutor) {
-		this.contato = new Contato(dadosTutor.nome(), dadosTutor.email());
-		this.senha = dadosTutor.senha();
+	public Tutor(TutorCadastroDTO dadosTutor, Usuario usuario) {
+		this.contato = new Contato(dadosTutor.nome());
+		this.usuario = usuario;
 	}
 
 	public void atualizarInformações(TutorAlteracaoDTO dadosTutor, Cidade cidade) {
@@ -79,7 +82,7 @@ public class Tutor {
 	}
 
 	public String getEmail() {
-		return this.contato.getEmail();
+		return this.usuario.getEmail();
 	}
 	
 	private String getCidadeAtributo(Function<Cidade, String> atributoGetter) {

@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Function;
 import br.org.adopet.api.domain.dto.AbrigoAlteracaoDTO;
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Embedded;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -13,6 +14,7 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
+import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
@@ -33,12 +35,15 @@ public class Abrigo {
 	private Contato contato;
 	@ManyToOne
 	private Cidade cidade;
+	@OneToOne(cascade = CascadeType.ALL)
+	private Usuario usuario;
 	@OneToMany(mappedBy = "abrigo")
 	private List<Pet> pets = new ArrayList<Pet>();
 
-	public Abrigo(AbrigoCadastroDTO dadosAbrigo, Cidade cidade) {
-		this.contato = new Contato(dadosAbrigo.nome(), dadosAbrigo.email(), dadosAbrigo.telefone());
+	public Abrigo(AbrigoCadastroDTO dadosAbrigo, Cidade cidade, Usuario usuario) {
+		this.contato = new Contato(dadosAbrigo.nome(), dadosAbrigo.telefone());
 		this.cidade = cidade;
+		this.usuario = usuario;
 	}
 
 	public void atualizarInformacoes(AbrigoAlteracaoDTO dadosAbrigo, Cidade cidade) {
@@ -46,7 +51,7 @@ public class Abrigo {
 			this.contato.setNome(dadosAbrigo.nome());
 		}
 		if (dadosAbrigo.email() != null && !dadosAbrigo.email().trim().isBlank()) {
-			this.contato.setEmail(dadosAbrigo.email());
+			this.usuario.setEmail(dadosAbrigo.email());
 		}
 		if (dadosAbrigo.telefone() != null && !dadosAbrigo.telefone().trim().isBlank()) {
 			this.contato.setTelefone(dadosAbrigo.telefone());
@@ -73,7 +78,7 @@ public class Abrigo {
 	}
 
 	public String getEmail() {
-		return this.contato.getEmail();
+		return this.usuario.getEmail();
 	}
 
 	private String getCidadeAtributo(Function<Cidade, String> atributoGetter) {

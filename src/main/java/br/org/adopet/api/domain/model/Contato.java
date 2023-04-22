@@ -13,11 +13,9 @@ import lombok.Setter;
 @AllArgsConstructor
 public class Contato {
 	private String nome;
-	private String email;
 	private String telefone;
 	
-	public Contato(String nome, String email) {
+	public Contato(String nome) {
 		this.nome = nome;
-		this.email = email;
 	}
 }

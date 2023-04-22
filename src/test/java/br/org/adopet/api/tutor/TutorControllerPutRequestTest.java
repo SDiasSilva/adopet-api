@@ -4,7 +4,8 @@ import static org.hamcrest.Matchers.is;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-import com.fasterxml.jackson.databind.ObjectMapper;
+
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -13,12 +14,16 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+
 import br.org.adopet.api.domain.dto.TutorAlteracaoDTO;
 import br.org.adopet.api.domain.dto.TutorCadastroDTO;
 import br.org.adopet.api.domain.model.Cidade;
 import br.org.adopet.api.domain.model.Tutor;
+import br.org.adopet.api.domain.model.Usuario;
 import br.org.adopet.api.domain.repository.CidadeRepository;
 import br.org.adopet.api.domain.repository.TutorRepository;
+import br.org.adopet.api.domain.repository.UsuarioRepository;
 
 
 @SpringBootTest
@@ -34,11 +39,24 @@ class TutorControllerPutRequestTest {
 	
 	@Autowired
 	private CidadeRepository cidadeRepository;
+	
+	@Autowired
+	private UsuarioRepository usuarioRepository;
+	
+	private TutorCadastroDTO dadosTutor;
+	private Usuario usuario;
+	private Tutor tutor;
 
+	
+	@BeforeEach
+	public void inicializarVariaveis() {
+		dadosTutor = new TutorCadastroDTO("John Doe", "johndoe@example.com", "Password123@");
+		usuario = usuarioRepository.save(new Usuario(dadosTutor.email(), dadosTutor.senha()));
+		tutor = tutorRepository.save(new Tutor(dadosTutor, usuario));
+	}
+	
 	@Test
 	public void testPutTutorNomeEmBranco() throws Exception {
-		Tutor tutor = tutorRepository
-				.save(new Tutor(new TutorCadastroDTO("John Doe", "johndoe@example.com", "Password123@")));
 		TutorAlteracaoDTO tutorAlteracaoDTO = new TutorAlteracaoDTO(tutor.getId(), "", "http://example.com/profile.jpg",
 				"1234567890", 1l, "I am a tutor.");
 	    String requestBody = new ObjectMapper().writeValueAsString(tutorAlteracaoDTO);
@@ -52,7 +70,6 @@ class TutorControllerPutRequestTest {
 	
 	@Test
 	public void testPutTutorNome() throws Exception {
-	    Tutor tutor = tutorRepository.save(new Tutor(new TutorCadastroDTO("John Doe", "johndoe@example.com", "Password123@")));
 	    Cidade cidade = null;
 	    TutorAlteracaoDTO tutorAlteracaoDTO = new TutorAlteracaoDTO(tutor.getId(), null, "Updated Name", null, null, null);
 	    tutor.atualizarInformações(tutorAlteracaoDTO, cidade);
@@ -68,7 +85,6 @@ class TutorControllerPutRequestTest {
 
 	@Test
 	public void testPutTutorFotoUrl() throws Exception {
-	    Tutor tutor = tutorRepository.save(new Tutor(new TutorCadastroDTO("John Doe", "johndoe@example.com", "Password123@")));
 	    TutorAlteracaoDTO tutorAlteracaoDTO = new TutorAlteracaoDTO(tutor.getId(), "http://example.com/profile.jpg", null, null, null, null);
 	    String requestBody = new ObjectMapper().writeValueAsString(tutorAlteracaoDTO);
 	    mockMvc.perform(put("/tutores")
@@ -81,7 +97,6 @@ class TutorControllerPutRequestTest {
 	
 	@Test
 	public void testPutTutorTelefone() throws Exception {
-	    Tutor tutor = tutorRepository.save(new Tutor(new TutorCadastroDTO("John Doe", "johndoe@example.com", "Password123@")));
 	    TutorAlteracaoDTO tutorAlteracaoDTO = new TutorAlteracaoDTO(tutor.getId(), null, null, "9876543210", null, null);
 	    String requestBody = new ObjectMapper().writeValueAsString(tutorAlteracaoDTO);
 	    mockMvc.perform(put("/tutores")
@@ -94,7 +109,6 @@ class TutorControllerPutRequestTest {
 	
 	@Test
 	public void testPutTutorCidade() throws Exception {
-	    Tutor tutor = tutorRepository.save(new Tutor(new TutorCadastroDTO("John Doe", "johndoe@example.com", "Password123@")));
 	    TutorAlteracaoDTO tutorAlteracaoDTO = new TutorAlteracaoDTO(tutor.getId(), null, null, null, 1l, null);
 	    Cidade cidade = cidadeRepository.getReferenceById(1l);
 	    String requestBody = new ObjectMapper().writeValueAsString(tutorAlteracaoDTO);
@@ -108,7 +122,6 @@ class TutorControllerPutRequestTest {
 
 	@Test
 	public void testPutTutorDescricao() throws Exception {
-	    Tutor tutor = tutorRepository.save(new Tutor(new TutorCadastroDTO("John Doe", "johndoe@example.com", "Password123@")));
 	    TutorAlteracaoDTO tutorAlteracaoDTO = new TutorAlteracaoDTO(tutor.getId(), null, null, null, null, "Lorem Ipsum");
 	    String requestBody = new ObjectMapper().writeValueAsString(tutorAlteracaoDTO);
 	    mockMvc.perform(put("/tutores")

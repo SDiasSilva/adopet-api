@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import br.org.adopet.api.domain.model.Abrigo;
 import br.org.adopet.api.domain.model.Cidade;
+import br.org.adopet.api.domain.model.Usuario;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
@@ -45,8 +46,9 @@ public class AbrigoController extends BaseController {
 	@Transactional
 	public ResponseEntity<AbrigoDetalhamentoDTO> postCadastrarAbrigo(
 			@RequestBody @Valid AbrigoCadastroDTO dadosAbrigo) {
+		Usuario usuarioCriado = super.usuarioRepository().save(new Usuario(dadosAbrigo.email(), dadosAbrigo.senha()));
 		Cidade cidade = super.buscarEntidade(dadosAbrigo.cidadeId(), super.cidadeRepository(), "cidade");
-		Abrigo abrigoCriado = super.abrigoRepository().save(new Abrigo(dadosAbrigo, cidade));
+		Abrigo abrigoCriado = super.abrigoRepository().save(new Abrigo(dadosAbrigo, cidade, usuarioCriado));
 		return ResponseEntity.ok(new AbrigoDetalhamentoDTO(abrigoCriado));
 	}
 
