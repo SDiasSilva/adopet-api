@@ -1,0 +1,9 @@
+CREATE TABLE funcoes (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    nome VARCHAR(100) NOT NULL UNIQUE
+);
+
+INSERT INTO funcoes (nome) VALUES
+('ADMIN'),
+('TUTOR'),
+('ABRIGO');
