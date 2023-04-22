@@ -2,6 +2,7 @@ package br.org.adopet.api.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 import br.org.adopet.api.domain.repository.AbrigoRepository;
 import br.org.adopet.api.domain.repository.AdocaoRepository;
@@ -11,12 +12,20 @@ import br.org.adopet.api.domain.repository.PorteRepository;
 import br.org.adopet.api.domain.repository.Repositories;
 import br.org.adopet.api.domain.repository.TutorRepository;
 import br.org.adopet.api.domain.repository.UsuarioRepository;
+import br.org.adopet.api.infra.security.SecurityConfigurations;
 import jakarta.persistence.EntityNotFoundException;
 
 public abstract class BaseController {
 	@Autowired
 	private Repositories repositories;
 
+	@Autowired
+	private SecurityConfigurations configuration;
+	
+	protected PasswordEncoder encoder() {
+		return configuration.passwordEncoder();
+	}
+	
 	protected AbrigoRepository abrigoRepository() {
 		return this.repositories.getAbrigoRepository();
 	}

@@ -1,7 +1,6 @@
 package br.org.adopet.api.controller;
 
 import java.util.List;
-
 import org.springframework.http.ResponseEntity;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -13,7 +12,6 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-
 import br.org.adopet.api.domain.dto.MensagemDTO;
 import br.org.adopet.api.domain.dto.TutorAlteracaoDTO;
 import br.org.adopet.api.domain.dto.TutorCadastroDTO;
@@ -26,11 +24,12 @@ import jakarta.validation.Valid;
 
 @RestController
 @RequestMapping("tutores")
-public class TutorController extends BaseController{
+public class TutorController extends BaseController {
 
 	@GetMapping
 	public ResponseEntity<List<TutorDetalhamentoDTO>> getTodosOsTutores() {
-		List<TutorDetalhamentoDTO> tutores = super.tutorRepository().findAll().stream().map(TutorDetalhamentoDTO::new).toList();
+		List<TutorDetalhamentoDTO> tutores = super.tutorRepository().findAll().stream().map(TutorDetalhamentoDTO::new)
+				.toList();
 		if (tutores.size() == 0) {
 			throw new EntityNotFoundException();
 		}
@@ -46,7 +45,8 @@ public class TutorController extends BaseController{
 	@PostMapping
 	@Transactional
 	public ResponseEntity<TutorDetalhamentoDTO> postCadastrarTutor(@RequestBody @Valid TutorCadastroDTO dadosTutor) {
-		Usuario usuarioCriado = super.usuarioRepository().save(new Usuario(dadosTutor.email(), dadosTutor.senha()));
+		Usuario usuarioCriado = super.usuarioRepository()
+				.save(new Usuario(dadosTutor.email(), super.encoder().encode(dadosTutor.senha())));
 		Tutor tutorCriado = super.tutorRepository().save(new Tutor(dadosTutor, usuarioCriado));
 		return ResponseEntity.ok(new TutorDetalhamentoDTO(tutorCriado));
 	}
