@@ -3,6 +3,11 @@ CREATE TABLE portes (
   descricao VARCHAR(100) NOT NULL
 );
 
+INSERT INTO portes (descricao) VALUES
+('Pequeno'),
+('Médio'),
+('Grande');
+
 CREATE TABLE pets (
   id INT AUTO_INCREMENT PRIMARY KEY,
   abrigo_id INT NOT NULL,
