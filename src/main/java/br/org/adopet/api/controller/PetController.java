@@ -1,6 +1,8 @@
 package br.org.adopet.api.controller;
 
-import java.util.List;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.transaction.annotation.Transactional;
@@ -13,6 +15,7 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+
 import br.org.adopet.api.domain.dto.MensagemDTO;
 import br.org.adopet.api.domain.dto.PetAlteracaoDTO;
 import br.org.adopet.api.domain.dto.PetCadastroDTO;
@@ -29,13 +32,13 @@ import jakarta.validation.Valid;
 public class PetController extends BaseController {
 
 	@GetMapping
-	public ResponseEntity<List<PetDetalhamentoDTO>> getTodosOsPets() {
-		List<PetDetalhamentoDTO> pets = super.petRepository().findAllByAdotadoIsFalse().stream()
-				.map(PetDetalhamentoDTO::new).toList();
-		if (pets.size() == 0) {
-			throw new EntityNotFoundException();
+	public ResponseEntity<Page<PetDetalhamentoDTO>> getTodosOsPets(
+			@PageableDefault(size = 9, sort = { "nome" }) Pageable paginacao) {
+		Page<PetDetalhamentoDTO> paginaPets = super.petRepository().findAllByAdotadoIsFalse(paginacao).map(PetDetalhamentoDTO::new);
+		if (!paginaPets.hasContent()) {
+			throw new EntityNotFoundException("Esta página de pets está vazia.");
 		}
-		return ResponseEntity.ok(pets);
+		return ResponseEntity.ok(paginaPets);
 	}
 
 	@GetMapping("/{id}")

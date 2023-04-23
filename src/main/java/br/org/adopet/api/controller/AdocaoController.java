@@ -19,6 +19,7 @@ import br.org.adopet.api.domain.dto.MensagemDTO;
 import br.org.adopet.api.domain.model.Adocao;
 import br.org.adopet.api.domain.model.Pet;
 import br.org.adopet.api.domain.model.Tutor;
+import jakarta.persistence.EntityNotFoundException;
 import jakarta.validation.Valid;
 
 @RestController
@@ -29,6 +30,9 @@ public class AdocaoController extends BaseController {
 	public ResponseEntity<Page<AdocaoDetalhamentoDTO>> getListarAdocoes(
 			@PageableDefault(size = 9, sort = { "data" }, direction = Direction.DESC) Pageable paginacao) {
 		Page<AdocaoDetalhamentoDTO> paginaAdocoes = super.adocaoRepository().findAll(paginacao).map(AdocaoDetalhamentoDTO::new);
+		if(!paginaAdocoes.hasContent()) {
+			throw new EntityNotFoundException("Esta página de adoções está vazia.");
+		}
 		return ResponseEntity.ok(paginaAdocoes);
 	}
 
