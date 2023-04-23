@@ -36,11 +36,17 @@ public class TratadorDeErros {
 		ErroDeBuscaDTO erroDeBuscaDTO = new ErroDeBuscaDTO(ex.getMessage());
 		return ResponseEntity.badRequest().body(erroDeBuscaDTO);
 	}
-	
+
 	@ExceptionHandler(AdocaoException.class)
-	public ResponseEntity<MensagemDTO> tratarPetJaAdotado(AdocaoException ex){
+	public ResponseEntity<MensagemDTO> tratarPetJaAdotado(AdocaoException ex) {
 		MensagemDTO mensagemDTO = new MensagemDTO(ex.getMessage());
 		return new ResponseEntity<MensagemDTO>(mensagemDTO, HttpStatus.CONFLICT);
+	}
+
+	@ExceptionHandler(LoginException.class)
+	public ResponseEntity<MensagemDTO> tratarLoginInvalido(LoginException ex) {
+		MensagemDTO mensagemDTO = new MensagemDTO(ex.getMessage());
+		return new ResponseEntity<MensagemDTO>(mensagemDTO, HttpStatus.FORBIDDEN);
 	}
 
 	private record DadosErroValidacao(String campo, String mensagem) {
