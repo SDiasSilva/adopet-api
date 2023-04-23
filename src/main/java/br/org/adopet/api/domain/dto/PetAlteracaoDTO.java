@@ -14,7 +14,6 @@ public record PetAlteracaoDTO(
 		@JsonProperty("porte_id")
 		Long porteId,
 		String descricao,
-		Boolean adotado,
 		@JsonProperty("data_nascimento")
 		LocalDate dataNascimento,
 		@URL

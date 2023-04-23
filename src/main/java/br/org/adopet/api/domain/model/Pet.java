@@ -66,9 +66,6 @@ public class Pet {
 		if(dadosPet.descricao() != null && !dadosPet.descricao().trim().isBlank()) {
 			this.descricao = dadosPet.descricao();
 		}
-		if(dadosPet.adotado() != null) {
-			this.adotado = dadosPet.adotado();
-		}
 		if(dadosPet.dataNascimento() != null) {
 			this.dataNascimento = dadosPet.dataNascimento();
 		}

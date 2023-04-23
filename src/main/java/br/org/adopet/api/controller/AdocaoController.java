@@ -31,7 +31,7 @@ public class AdocaoController extends BaseController{
 	
 	@DeleteMapping("/{id}")
 	@Transactional
-	public ResponseEntity<MensagemDTO> deleteAdocao(@PathVariable Long id){
+	public ResponseEntity<MensagemDTO> deleteCancelarAdocao(@PathVariable Long id){
 		Adocao adocao = super.buscarEntidade(id, super.adocaoRepository(), "adocao");
 		adocao.cancelar();
 		super.adocaoRepository().delete(adocao);

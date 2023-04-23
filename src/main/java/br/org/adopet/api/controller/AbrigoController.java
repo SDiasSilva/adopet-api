@@ -47,7 +47,7 @@ public class AbrigoController extends BaseController {
 	@Transactional
 	public ResponseEntity<AbrigoDetalhamentoDTO> postCadastrarAbrigo(
 			@RequestBody @Valid AbrigoCadastroDTO dadosAbrigo) {
-		Funcao funcaoAbrigo = super.funcaoRepository().findByNome("ABRIGO");
+		Funcao funcaoAbrigo = super.funcaoRepository().findByNome("ROLE_ABRIGO");
 		Usuario usuarioCriado = super.usuarioRepository()
 				.save(new Usuario(dadosAbrigo.email(), super.encoder().encode(dadosAbrigo.senha()), funcaoAbrigo));
 		Cidade cidade = super.buscarEntidade(dadosAbrigo.cidadeId(), super.cidadeRepository(), "cidade");

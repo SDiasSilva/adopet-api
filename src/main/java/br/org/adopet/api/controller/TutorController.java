@@ -46,7 +46,7 @@ public class TutorController extends BaseController {
 	@PostMapping
 	@Transactional
 	public ResponseEntity<TutorDetalhamentoDTO> postCadastrarTutor(@RequestBody @Valid TutorCadastroDTO dadosTutor) {
-		Funcao funcaoTutor = super.funcaoRepository().findByNome("TUTOR");
+		Funcao funcaoTutor = super.funcaoRepository().findByNome("ROLE_TUTOR");
 		Usuario usuarioCriado = super.usuarioRepository()
 				.save(new Usuario(dadosTutor.email(), super.encoder().encode(dadosTutor.senha()), funcaoTutor));
 		Tutor tutorCriado = super.tutorRepository().save(new Tutor(dadosTutor, usuarioCriado));

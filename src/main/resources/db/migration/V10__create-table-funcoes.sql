@@ -4,6 +4,6 @@ CREATE TABLE funcoes (
 );
 
 INSERT INTO funcoes (nome) VALUES
-('ADMIN'),
-('TUTOR'),
-('ABRIGO');
+('ROLE_ADMIN'),
+('ROLE_TUTOR'),
+('ROLE_ABRIGO');

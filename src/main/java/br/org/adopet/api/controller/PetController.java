@@ -2,6 +2,7 @@ package br.org.adopet.api.controller;
 
 import java.util.List;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.annotation.Secured;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -45,6 +46,7 @@ public class PetController extends BaseController {
 
 	@PostMapping
 	@Transactional
+	@Secured("ROLE_ABRIGO")
 	public ResponseEntity<PetDetalhamentoDTO> postCadastrarPet(@RequestBody @Valid PetCadastroDTO dadosPet) {
 		Abrigo abrigo = super.buscarEntidade(dadosPet.abrigoId(), super.abrigoRepository(), "abrigo");
 		Porte porte = super.buscarEntidade(dadosPet.porteId(), super.porteRepository(), "porte");
