@@ -4,11 +4,13 @@ import java.sql.SQLIntegrityConstraintViolationException;
 import java.util.List;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.AccessDeniedException;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
-import br.org.adopet.api.domain.dto.ErroDeBuscaDTO;
+import br.org.adopet.api.domain.dto.ErroDTO;
 import br.org.adopet.api.domain.dto.MensagemDTO;
 import jakarta.persistence.EntityNotFoundException;
 
@@ -16,13 +18,13 @@ import jakarta.persistence.EntityNotFoundException;
 public class TratadorDeErros {
 
 	@ExceptionHandler(EntityNotFoundException.class)
-	public ResponseEntity<ErroDeBuscaDTO> tratarErro404(EntityNotFoundException ex) {
+	public ResponseEntity<ErroDTO> tratarErro404(EntityNotFoundException ex) {
 		String mensagem = ex.getMessage();
 		if (mensagem == null || mensagem.trim().isBlank()) {
 			mensagem = "Nada foi encontrado no banco de dados.";
 		}
-		ErroDeBuscaDTO erroDeBuscaDTO = new ErroDeBuscaDTO(mensagem);
-		return new ResponseEntity<ErroDeBuscaDTO>(erroDeBuscaDTO, HttpStatus.NOT_FOUND);
+		ErroDTO erroDeBuscaDTO = new ErroDTO(mensagem);
+		return new ResponseEntity<ErroDTO>(erroDeBuscaDTO, HttpStatus.NOT_FOUND);
 	}
 
 	@ExceptionHandler(MethodArgumentNotValidException.class)
@@ -32,8 +34,8 @@ public class TratadorDeErros {
 	}
 
 	@ExceptionHandler(SQLIntegrityConstraintViolationException.class)
-	public ResponseEntity<ErroDeBuscaDTO> tratarErroDeIntegridade(SQLIntegrityConstraintViolationException ex) {
-		ErroDeBuscaDTO erroDeBuscaDTO = new ErroDeBuscaDTO(ex.getMessage());
+	public ResponseEntity<ErroDTO> tratarErroDeIntegridade(SQLIntegrityConstraintViolationException ex) {
+		ErroDTO erroDeBuscaDTO = new ErroDTO(ex.getMessage());
 		return ResponseEntity.badRequest().body(erroDeBuscaDTO);
 	}
 
@@ -49,6 +51,21 @@ public class TratadorDeErros {
 		return new ResponseEntity<MensagemDTO>(mensagemDTO, HttpStatus.FORBIDDEN);
 	}
 
+	@ExceptionHandler(BadCredentialsException.class)
+    public ResponseEntity<MensagemDTO> tratarErroBadCredentials() {
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new MensagemDTO("Credenciais inválidas"));
+    }
+
+    @ExceptionHandler(AccessDeniedException.class)
+    public ResponseEntity<MensagemDTO> tratarErroAcessoNegado() {
+        return ResponseEntity.status(HttpStatus.FORBIDDEN).body(new MensagemDTO("Acesso negado"));
+    }
+
+    @ExceptionHandler(Exception.class)
+    public ResponseEntity<ErroDTO> tratarErro500(Exception ex) {
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ErroDTO(ex.getLocalizedMessage()));
+    }
+	
 	private record DadosErroValidacao(String campo, String mensagem) {
 		public DadosErroValidacao(FieldError erro) {
 			this(erro.getField(), erro.getDefaultMessage());
